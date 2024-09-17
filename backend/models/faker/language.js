@@ -1,24 +1,17 @@
 const { faker } = require('@faker-js/faker');
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    const users = [];
-
-    for (let i = 0; i < 50; i++) {
-      users.push({
-        username: faker.internet.userName(),
-        email: faker.internet.email(),
-        passwordHash: faker.internet.password(),
-        profilePicture: faker.image.avatar(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+    up: async (queryInterface, Sequelize) => {
+      const languages = [
+        { name: 'English', description: 'English language', createdAt: new Date(), updatedAt: new Date() },
+        { name: 'Spanish', description: 'Spanish language', createdAt: new Date(), updatedAt: new Date() },
+      ];
+  
+      return queryInterface.bulkCreate( languages);
+    },
+  
+    down: async (queryInterface, Sequelize) => {
+      return queryInterface.truncate();
     }
-
-    return queryInterface.bulkCreate( users);
-  },
-
-  down: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('Users', null, {});
-  }
-};
+  };
+  
