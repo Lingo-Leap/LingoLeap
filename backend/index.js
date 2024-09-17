@@ -8,13 +8,19 @@ require("./config/config");
 // =======
 require("./models");
 
-const app = express();
-// const progressRoutes = require("./routes/progressRoutes");
-const port = process.env.PORT || 1274;
-app.use(cors());
-app.use(express.json());
 
-// app.use("/api/progress", progressRoutes);
+const userRouter = require("./routers/user.router");
+const app = express();
+const port = process.env.PORT || 3000;
+
+
+app.use(express.json());
+app.use(cors())
+
+
+app.use("/api/user", userRouter);
+
 app.listen(port, () => {
-  console.log(`Server running on port  http://localhost:${port}`);
-});
+    console.log(`Server running on port  http://localhost:${port}`);
+  });
+
