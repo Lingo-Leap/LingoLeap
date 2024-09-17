@@ -34,13 +34,18 @@ import axios from 'axios';
 
 export interface RootState {
   counter: DataState;
-  // user: UserState; // Add user state
+  user: UserState; // Add user state
 }
 // Define the type for the data you expect to fetch
 interface Data {
   id: number;
   name: string;
   // Add other fields based on your API response
+}
+interface UserState {
+  id: number;
+  name: string;
+  // Add other fields based on your requirements
 }
 
 interface DataState {
