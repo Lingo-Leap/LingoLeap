@@ -55,6 +55,7 @@ Choice.belongsTo(Question, { foreignKey: 'questionId' });
 //   })
 //   .catch((error) => {
 //     console.error("Error synchronizing models:", error);
+
 //   });
 
 
