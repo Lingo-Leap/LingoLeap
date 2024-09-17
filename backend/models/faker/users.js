@@ -1,5 +1,5 @@
 const { faker } = require('@faker-js/faker');
-
+const bcrypt = require("bcrypt");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const users = [];
@@ -8,10 +8,11 @@ module.exports = {
       users.push({
         username: faker.internet.userName(),
         email: faker.internet.email(),
-        passwordHash: faker.internet.password(),
+        passwordHash:await bcrypt.hash('1234', 10),
         profilePicture: faker.image.avatar(),
         createdAt: new Date(),
         updatedAt: new Date(),
+        role: faker.helpers.arrayElement(['user', 'admin',"teacher"])
       });
     }
 

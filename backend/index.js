@@ -9,12 +9,20 @@
 // // require("./models")
 // >>>>>>> main
 
-// const app = express();
-// const port = process.env.PORT || 3000;
+
+=======
+const userRouter = require("./routers/user.router");
+const app = express();
+const port = process.env.PORT || 3000;
+
 
 // app.use(express.json());
 // // app.use(cors())
 
-// app.listen(port, () => {
-//   console.log(`Server running on port  http://localhost:${port}`);
-// });
+
+app.use("/api/user", userRouter);
+
+app.listen(port, () => {
+    console.log(`Server running on port  http://localhost:${port}`);
+  });
+
