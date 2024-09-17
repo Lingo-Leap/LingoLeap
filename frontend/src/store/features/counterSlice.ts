@@ -32,6 +32,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+export interface RootState {
+  counter: DataState;
+  // user: UserState; // Add user state
+}
 // Define the type for the data you expect to fetch
 interface Data {
   id: number;
