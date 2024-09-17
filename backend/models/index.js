@@ -49,7 +49,7 @@ Choice.belongsTo(Question, { foreignKey: 'questionId' });
 //   .catch((error) => {
 //     console.error("Error synchronizing models:", error);
 //   });
-//   const userFaker= require("./faker/users").up(User,sequelize)
+  // const userFaker= require("./faker/users").up(User,sequelize)
 
 module.exports = {
   User,
