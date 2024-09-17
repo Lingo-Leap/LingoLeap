@@ -1,0 +1,70 @@
+const Sequelize = require('sequelize');
+const sequelize = require('../config/config'); 
+
+const User = require('./user.model');
+const Lesson = require('./lesson.model');
+const Language = require('./language.model');
+const Achievement = require('./achievement.model');
+const UserAchievement = require('./userAchievement.model');
+const Progress = require('./progress.model');
+const Question = require('./question.model');
+const Choice = require('./choice.model');
+const LessonsUsers = require('./lessonsUsers.model');
+const LanguageUsers = require('./languageUsers.model');
+
+
+User.belongsToMany(Lesson, { foreignKey: 'userId' ,through:LessonsUsers});
+Lesson.belongsToMany(User, { foreignKey: 'lessonId',through:LessonsUsers });
+
+User.belongsToMany(Language, { foreignKey: 'userId' ,through:LanguageUsers});
+Language.belongsToMany(User, { foreignKey: 'lessonId',through:LanguageUsers });
+
+//  associations
+User.hasMany(Progress, { foreignKey: 'userId' });
+Progress.belongsTo(User, { foreignKey: 'userId' });
+
+UserAchievement.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(UserAchievement, { foreignKey: 'userId' });
+
+Lesson.belongsTo(Language, { foreignKey: 'languageId' });
+Language.hasMany(Lesson, { foreignKey: 'languageId' });
+
+UserAchievement.belongsTo(Achievement, { foreignKey: 'achievementId' });
+Achievement.hasMany(UserAchievement, { foreignKey: 'achievementId' });
+
+Progress.belongsTo(Lesson, { foreignKey: 'lessonId' });
+Lesson.hasMany(Progress, { foreignKey: 'lessonId' });
+
+Question.belongsTo(Lesson, { foreignKey: 'lessonId' });
+Lesson.hasMany(Question, { foreignKey: 'lessonId' });
+
+Question.hasMany(Choice, { foreignKey: 'questionId' });
+Choice.belongsTo(Question, { foreignKey: 'questionId' });
+
+// sequelize
+//   .sync({ force: true })
+//   .then(() => {
+//     console.log("All models were synchronized successfully.");
+//   })
+//   .catch((error) => {
+//     console.error("Error synchronizing models:", error);
+//   });
+  // const userFaker= require("./faker/users").up(User,sequelize)
+
+module.exports = {
+  User,
+  Lesson,
+  Language,
+  Achievement,
+  UserAchievement,
+  Progress,
+  Question,
+  Choice,
+  sequelize
+};
+
+
+
+
+
+
