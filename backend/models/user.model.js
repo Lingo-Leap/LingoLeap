@@ -14,9 +14,9 @@ const User = sequelize.define("User", {
   },
   role: {
     type: DataTypes.ENUM,
-    values:['user', 'admin',"teacher"], 
+    values: ["user", "admin", "teacher"],
     allowNull: false,
-    defaultValue: "user"
+    defaultValue: "user",
   },
   passwordHash: {
     type: DataTypes.STRING,
@@ -27,10 +27,10 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  // totalPoints: {
-  //   type: DataTypes.INTEGER,
-  //   defaultValue: 0,
-  // },
+  totalPoints: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

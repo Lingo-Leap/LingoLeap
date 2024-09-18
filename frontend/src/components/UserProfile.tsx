@@ -5,7 +5,7 @@ import { fetchUserProfile } from '../redux/actions/userActions';
 import '../UserProfile.css';
 const UserProfile = () => {
   const dispatch = useDispatch();
-  const userId = 56; // Replace with actual user ID
+  const userId = 8; 
   const userProfile = useSelector((state: RootState) => state.user.profile);
 
   useEffect(() => {
@@ -16,6 +16,7 @@ const UserProfile = () => {
     if (userProfile) {
       console.log('Profile Picture URL:', userProfile.profilePicture);
     }
+  
   }, [userProfile]);
 
   if (!userProfile) {
@@ -30,7 +31,7 @@ const UserProfile = () => {
       <div className="profile-info">
         <h2>{userProfile.username}</h2>
         <p>Email: {userProfile.email}</p>
-        <p>Total Points: {userProfile.totalPoints}</p>
+        <p>Total Points: {userProfile.totalPoints || 0}</p>
       </div>
     </div>
   );
