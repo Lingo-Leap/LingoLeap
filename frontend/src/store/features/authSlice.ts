@@ -19,9 +19,12 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string, passwordHash: string }, thunkAPI) => {
     try {
-      const response = await axios.post('/api/user/login', credentials);
-      return response.data;  // It should return the JWT token
+      const response = await axios.post('http://127.0.0.1:1274/api/user/login', credentials);
+      console.log("login success", response.data)
+      return response.data;  
     } catch (error: any) {
+      console.log("error", error);
+      
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -32,7 +35,9 @@ export const signup = createAsyncThunk(
   'auth/signup',
   async (userData: { username: string, email: string, passwordHash: string, role: string }, thunkAPI) => {
     try {
-      const response = await axios.post('/api/user/register', userData);
+      const response = await axios.post('http://127.0.0.1:1274/api/user/register', userData);
+      console.log("register success", response.data)
+
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -71,7 +76,7 @@ const authSlice = createSlice({
       })
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload as string || 'Signup failed'; 
       });
   }
 });

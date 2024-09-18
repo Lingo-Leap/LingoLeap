@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { HelmetProvider, Helmet } from 'react-helmet-async'; 
+// import { HelmetProvider, Helmet } from 'react-helmet-async';
 import App from './App';
 import  store  from '../src/redux/store';
 import { Provider } from 'react-redux';
@@ -14,14 +14,14 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <Router>
-      <HelmetProvider>
+      {/* <HelmetProvider>
         <Helmet>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet" />
-        </Helmet>
+        </Helmet> */}
         <App />
-      </HelmetProvider>
+      {/* </HelmetProvider> */}
     </Router>
   </Provider>
 );

@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from './redux/store';
 import { Routes, Route } from "react-router-dom"
 import Home from './pages/Home';
+import Login from './components/Login';
+import Signup from './components/SignUp';
 
 
 import { Provider } from 'react-redux';
@@ -34,7 +36,7 @@ function App() {
   return (
      <Provider store={store}>
     <div className="App">
-      <h1>Languages</h1>
+      {/* <h1>Languages</h1>
       <button onClick={handleFetchLanguages}>Fetch Languages</button>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
@@ -45,7 +47,9 @@ function App() {
     <Progress />
     <Routes>
    <Route path="/" element={<Home />} />
-   </Routes>
+   </Routes> */}
+   <Signup/>
+   <Login/>
       </div>
     </Provider>
   );
