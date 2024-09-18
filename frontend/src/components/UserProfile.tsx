@@ -5,7 +5,7 @@ import { fetchUserProfile } from '../redux/actions/userActions';
 import '../UserProfile.css';
 const UserProfile = () => {
   const dispatch = useDispatch();
-  const userId = 50; // Replace with actual user ID
+  const userId = 8;
   const userProfile = useSelector((state: RootState) => state.user.profile);
 
   useEffect(() => {
