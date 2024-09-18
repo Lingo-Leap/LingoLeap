@@ -1,5 +1,5 @@
 import React from 'react';
-import { Language } from '../redux/types'; 
+import { Language } from '../redux/types';
 
 interface LanguageListProps {
   languages: Language[];
@@ -19,6 +19,7 @@ const LanguageList: React.FC<LanguageListProps> = ({ languages }) => {
       </ul>
     </div>
   );
+  
 };
 
 export default LanguageList;
