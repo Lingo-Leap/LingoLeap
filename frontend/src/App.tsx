@@ -1,6 +1,15 @@
 import React from 'react';
+
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from './redux/store';
+import { Routes, Route } from "react-router-dom"
+import Home from './pages/Home';
+
+
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import Progress from './components/Progress';
 import { fetchLanguagesRequest, fetchLanguagesSuccess, fetchLanguagesFailure } from './redux/actions/languageActions'; 
 import './App.css';
 import LanguageList from './components/LanguageList'; // Ensure correct import
@@ -23,14 +32,23 @@ function App() {
   };
 
   return (
+     <Provider store={store}>
     <div className="App">
       <h1>Languages</h1>
       <button onClick={handleFetchLanguages}>Fetch Languages</button>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      <LanguageList languages={languages} /> {/* Pass languages to LanguageList if needed */}
-    </div>
+      <LanguageList languages={languages} /> 
+   
+
+
+    <Progress />
+    <Routes>
+   <Route path="/" element={<Home />} />
+   </Routes>
+      </div>
+    </Provider>
   );
-}
+};
 
 export default App;
