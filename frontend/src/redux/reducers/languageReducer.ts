@@ -1,40 +1,39 @@
-import { Language } from '../types'
-import { LanguageActionTypes, FETCH_LANGUAGES_REQUEST, FETCH_LANGUAGES_SUCCESS, FETCH_LANGUAGES_FAILURE } from '../actions/languageAction';
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchLanguages } from '../actions/languageAction'; // Adjust the import path as needed
+import { Language } from '../types';
 
 interface LanguageState {
   languages: Language[];
-  loading: boolean;
-  error?: string;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: LanguageState = {
   languages: [],
-  loading: false,
-  error: undefined,
+  status: 'idle',
+  error: null,
 };
 
-const languageReducer = (state = initialState, action: LanguageActionTypes): LanguageState => {
-  switch (action.type) {
-    case FETCH_LANGUAGES_REQUEST:
-      return {
-        ...state,
-        loading: true,
-      };
-    case FETCH_LANGUAGES_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        languages: action.payload,
-      };
-    case FETCH_LANGUAGES_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-    default:
-      return state;
-  }
-};
+const languageSlice = createSlice({
+  name: 'languages',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchLanguages.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchLanguages.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.languages = action.payload;
+        state.error = null; // Clear any previous errors
+      })
+      .addCase(fetchLanguages.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to fetch languages';
+      });
+  },
+});
 
-export default languageReducer;
+export default languageSlice.reducer;
+
