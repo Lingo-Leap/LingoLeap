@@ -1,7 +1,5 @@
-
-
-import { Language } from '../types'; 
-import { LanguageActionTypes, FETCH_LANGUAGES_REQUEST, FETCH_LANGUAGES_SUCCESS, FETCH_LANGUAGES_FAILURE } from '../actions/languageActions';
+import { Language } from '../types'
+import { LanguageActionTypes, FETCH_LANGUAGES_REQUEST, FETCH_LANGUAGES_SUCCESS, FETCH_LANGUAGES_FAILURE } from '../actions/languageAction';
 
 interface LanguageState {
   languages: Language[];
