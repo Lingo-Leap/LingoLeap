@@ -13,13 +13,13 @@ const LanguageList: React.FC<LanguageListProps> = ({ languages }) => {
         {languages.map((language) => (
           <li key={language.id}>
             <h2>{language.name}</h2>
-            <p>{language.description}</p>
+            {language.description && <p>{language.description}</p>} {/* Check if description exists */}
+            {language.languagePicture && <img src={language.languagePicture} alt={`${language.name} picture`} />} {/* Display image if exists */}
           </li>
         ))}
       </ul>
     </div>
   );
-  
 };
 
 export default LanguageList;
