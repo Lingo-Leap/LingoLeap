@@ -1,16 +1,16 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/config'); 
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/config");
 
-const User = sequelize.define('User', {
+const User = sequelize.define("User", {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   role: {
     type: DataTypes.ENUM,
@@ -20,21 +20,25 @@ const User = sequelize.define('User', {
   },
   passwordHash: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
 
   profilePicture: {
-    type: DataTypes.STRING, 
-    allowNull: true
+    type: DataTypes.STRING,
+    allowNull: true,
   },
+  // totalPoints: {
+  //   type: DataTypes.INTEGER,
+  //   defaultValue: 0,
+  // },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  }
+    defaultValue: DataTypes.NOW,
+  },
 });
 
 module.exports = User;
