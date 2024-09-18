@@ -1,5 +1,6 @@
 const { faker } = require('@faker-js/faker');
 
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const languages = [
@@ -29,6 +30,7 @@ module.exports = {
       console.error('Error during bulkCreate:', error);
     }
   },
+  
 
   down: async (queryInterface, Sequelize) => {
     return queryInterface.truncate();
