@@ -15,7 +15,7 @@ module.exports = {
       if (!username || !email || !passwordHash || !role) {
         return res.status(400).json({ message: "All fields are required" });
       }
-
+      
       // Email format validation (simple regex)
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
@@ -58,37 +58,46 @@ module.exports = {
     }
   },
 
-  userLogin: async (req, res) => {
-    try {
-      const { email, passwordHash } = req.body;
-      const user = await User.findOne({ where: { email } });
-      if (!user) {
-        return res.status(400).json({ message: "User not found" });
-      }
-      const passwordMatch = await bcrypt.compare(
-        passwordHash,
-        user.passwordHash
-      );
-      if (!passwordMatch) {
-        return res.status(400).json({ message: "Invalid password" });
-      }
-      const token = jwt.sign(
-        { id: user.id, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
-      res.cookie("token", token, { httpOnly: true });
-      res.status(200).json({
-        message: "Login successful",
-        role: user.role,
-        userName: user.username,
-        email: user.email,
-        profilePicture: user.profilePicture,
-      });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  },
+      userLogin: async (req, res) => {
+        try {
+          const { email, passwordHash } = req.body;
+          const user = await User.findOne({ where: { email } });
+      
+          if (!user) {
+            return res.status(400).json({ message: "User not found" });
+          }
+      
+         
+          const passwordMatch = await bcrypt.compare(
+            passwordHash,
+            user.passwordHash
+          );
+          if (!passwordMatch) {
+            return res.status(400).json({ message: "Invalid password" });
+          }
+      
+          // Generate JWT token
+          const token = jwt.sign(
+            { id: user.id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+          );
+      
+      
+          res.status(200).json({
+            message: "Login successful",
+            token, 
+            role: user.role,
+            userName: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture,
+          });
+      
+        } catch (error) {
+          res.status(500).json({ message: error.message });
+        }
+
+},
 
   updateUser: async (req, res) => {
     try {
