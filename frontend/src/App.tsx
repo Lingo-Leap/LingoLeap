@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { RootState, AppDispatch } from './store/store';
 import { fetchLanguages } from '../src/redux/actions/languageAction'; 
@@ -8,7 +8,9 @@ import Home from './pages/Home';
 import UserProfile from './components/UserProfile';
 import Navbar from './components/Navbar';
 import AchievementsPage from './pages/AchievementsPage';
-import LanguageList from './components/LanguageList';
+import HeroWelcome from './pages/HeroWelcome';
+import Login from './components/Login';
+import SignUp from './components/SignUp';
 import { store } from './store/store';
 import './App.css';
 
@@ -20,22 +22,33 @@ function App() {
     dispatch(fetchLanguages());
   }, [dispatch]);
 
+  const NavbarWrapper: React.FC = () => {
+    return (
+      <>
+        <Navbar />
+        <Outlet />
+      </>
+    );
+  };
+
   return (
     <Provider store={store}>
       <div className="App">
-        <h1>Languages</h1>
-        {status === 'loading' && <p>Loading...</p>}
-        {error && <p>Error: {error}</p>}
-        <LanguageList languages={languages} />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/achievements" element={<AchievementsPage />} />
-          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/" element={<HeroWelcome />} />
+          
+          <Route element={<NavbarWrapper />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/profile" element={<UserProfile />} />
+          </Route>
+
+          <Route path="/register" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </Provider>
   );
-};
+}
 
 export default App;
-
