@@ -4,7 +4,7 @@ require("dotenv").config();
 // MiddleWare Here we will need auth for now
 
 const authenticate = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.headers.authorization.split(" ")[0];
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
