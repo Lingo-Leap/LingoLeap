@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 // import { increment, decrement, incrementByAmount } from './store/features/counterSlice';
@@ -6,20 +7,25 @@ import type { RootState, AppDispatch } from './store/store';
 import { Routes, Route } from "react-router-dom"
 import Home from './pages/Home';
 
-function App() {
-  // const count = useSelector((state: RootState) => state.counter.value);
-  // console.log("count",count);
-  const dispatch: AppDispatch = useDispatch();
 
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import Progress from './components/Progress';
+import './App.css';
+
+const App: React.FC = () => {
   return (
-    <div className="App">
-      {/* <button onClick={() => dispatch(increment())}>Increment</button> */}
-   {/* <h1>{count}</h1> */}
-   <Routes>
+
+
+    <Provider store={store}>
+      <div className="App">
+        <Progress />
+         <Routes>
    <Route path="/" element={<Home />} />
    </Routes>
-    </div>
+      </div>
+    </Provider>
   );
-}
+};
 
 export default App;
