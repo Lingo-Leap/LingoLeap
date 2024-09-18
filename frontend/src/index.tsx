@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { HelmetProvider, Helmet } from 'react-helmet-async'; 
 import App from './App';
-import  store  from '../src/redux/store';
+import { store } from './store/store';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 

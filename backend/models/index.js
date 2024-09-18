@@ -64,7 +64,7 @@ Choice.belongsTo(Question, { foreignKey: "questionId" });
 
 
 // const userFaker= require("./faker/users").up(User,sequelize)
-// const languageFaker= require("./faker/language").up(Language,sequelize)
+const languageFaker= require("./faker/language").up(Language,sequelize)
 // const lessonFaker= require("./faker/lesson").up(Lesson,sequelize)
 // const questionFaker= require("./faker/question").up(Question,sequelize)
 // const choiceFaker= require("./faker/choice").up(Choice,sequelize)

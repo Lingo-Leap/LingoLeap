@@ -1,54 +1,57 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from "react-router-dom";
-import type { RootState, AppDispatch } from './redux/store';
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route } from "react-router-dom";
+import type { RootState, AppDispatch } from './store/store';
 import Home from './pages/Home';
-
-
+import LanguageList from './components/LanguageList';
+import { fetchLanguagesRequest, fetchLanguagesSuccess, fetchLanguagesFailure } from '../src/redux/actions/languageAction'; 
+import './App.css';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
-import Progress from './components/Progress';
-import { fetchLanguagesRequest, fetchLanguagesSuccess, fetchLanguagesFailure } from './redux/actions/languageActions'; 
-import './App.css';
-import LanguageList from './components/LanguageList'; // Ensure correct import
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
   const { languages, loading, error } = useSelector((state: RootState) => state.language);
 
-  const handleFetchLanguages = () => {
-    dispatch(fetchLanguagesRequest());
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      dispatch(fetchLanguagesRequest());
+      try {
+        const response = await fetch("http://localhost:1274/api/language/get");
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        dispatch(fetchLanguagesSuccess(data));
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          dispatch(fetchLanguagesFailure(err.message));
+        } else {
+          dispatch(fetchLanguagesFailure("An unknown error occurred"));
+        }
+      }
+    };
 
-    // Here you would typically call an API and dispatch success or failure actions based on the result
-    // Example:
-    /*
-    fetch('your-api-endpoint')
-      .then(response => response.json())
-      .then(data => dispatch(fetchLanguagesSuccess(data)))
-      .catch(err => dispatch(fetchLanguagesFailure(err.message)));
-    */
-  };
+    fetchLanguages();
+  }, [dispatch]);
 
   return (
-     <Provider store={store}>
     <div className="App">
       <h1>Languages</h1>
-      <button onClick={handleFetchLanguages}>Fetch Languages</button>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      <LanguageList languages={languages} /> 
-   
-
-
-    <Progress />
-    <Routes>
-   <Route path="/" element={<Home />} />
-   </Routes>
-      </div>
-    </Provider>
+      <LanguageList languages={languages} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </div>
   );
-};
+}
 
-export default App;
+const Root = () => (
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+
+export default Root;
