@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from './redux/store';
 import { Routes, Route } from "react-router-dom"
 import Home from './pages/Home';
-
+import UserProfile from './components/UserProfile';
 
 import { Provider } from 'react-redux';
 import { store } from './store/store';
@@ -34,17 +34,18 @@ function App() {
   return (
      <Provider store={store}>
     <div className="App">
-      <h1>Languages</h1>
+      {/* <h1>Languages</h1>
       <button onClick={handleFetchLanguages}>Fetch Languages</button>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       <LanguageList languages={languages} /> 
-   
-
+    */}
+      <UserProfile />
 
     <Progress />
     <Routes>
    <Route path="/" element={<Home />} />
+   {/* <Route path="/userProfile" element={<UserProfile />} /> */}
    </Routes>
       </div>
     </Provider>
