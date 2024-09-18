@@ -1,8 +1,6 @@
-
-
 export interface Language {
-    id: number;
-    name: string;
-    description?: string;
-  }
-  
+  id: number;
+  name: string;
+  description?: string;
+  languagePicture: string;
+}
