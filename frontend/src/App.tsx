@@ -5,8 +5,15 @@ import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from './redux/store';
 import { Routes, Route } from "react-router-dom"
 import Home from './pages/Home';
+<<<<<<< HEAD
 import UserProfile from './components/UserProfile';
 
+=======
+import Navbar from './components/Navbar';
+import AchievementsPage from './pages/AchievementsPage';
+import LoginContainer from './components/LoginContainer';
+import HeroWelcome from './pages/HeroWelcome';
+>>>>>>> e3a1eb9db5d435e163d1a9dbfe4437f5143e5b69
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import Progress from './components/Progress';
@@ -34,6 +41,11 @@ function App() {
   return (
      <Provider store={store}>
     <div className="App">
+<<<<<<< HEAD
+=======
+      <HeroWelcome/>
+    {/* <Navbar /> */}
+>>>>>>> e3a1eb9db5d435e163d1a9dbfe4437f5143e5b69
       {/* <h1>Languages</h1>
       <button onClick={handleFetchLanguages}>Fetch Languages</button>
       {loading && <p>Loading...</p>}
@@ -42,10 +54,17 @@ function App() {
     */}
       <UserProfile />
 
-    <Progress />
+    <Progress /> */}
+    {/* <LoginContainer/> */}
     <Routes>
    <Route path="/" element={<Home />} />
+<<<<<<< HEAD
    {/* <Route path="/userProfile" element={<UserProfile />} /> */}
+=======
+   <Route path="/home" element={<Home />} />
+    <Route path="/achievements" element={<AchievementsPage />} />
+   {/* <Route path="/profile" element ={<Profile />}/> */}
+>>>>>>> e3a1eb9db5d435e163d1a9dbfe4437f5143e5b69
    </Routes>
       </div>
     </Provider>
