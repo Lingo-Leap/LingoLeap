@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 // import { increment, decrement, incrementByAmount } from './store/features/counterSlice';
 import type { RootState, AppDispatch } from './store/store';
 import { Routes, Route } from "react-router-dom"
-import './App.css';
 import Home from './pages/Home';
 
 function App() {

@@ -1,13 +1,13 @@
-import Navbar from "../components/Navbar"
+import React from 'react';
+import Navbar from '../components/Navbar'; 
 
-function Home(){
+const Home: React.FC = () => {
+  return (
+    <div>
+      <Navbar />
+      <h1 className="text-2xl  font-sans">Home Page</h1>
+    </div>
+  );
+};
 
-    return(
-        <div>
-        "HOME!"
-        <Navbar />
-        </div>
-    )
-}
-
-export default Home
+export default Home;

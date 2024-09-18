@@ -6,14 +6,12 @@ function Navbar(){
 
 const navigate=useNavigate();
 
-const handleHomeClick = () => {
-    navigate("/home")
-}
 
 return(
     <div>
-        <p>test</p>
-        <Link to="/home">Home</Link>
+        <Link to="/home"> Home </Link>
+        <Link to="/achievements"> Achievements </Link>
+        <Link to="/profile"> Profile </Link>
     </div>
 )
 
