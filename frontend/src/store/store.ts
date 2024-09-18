@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './features/counterSlice';
+
 import userReducer from '../redux/reducers/userReducers'; 
 
 import languageReducer from '../redux/reducers/languageReducer';

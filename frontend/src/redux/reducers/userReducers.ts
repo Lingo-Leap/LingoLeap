@@ -8,6 +8,7 @@ export interface UserProfile {
   totalPoints: number;
 }
 
+
 interface UserState {
   profile: UserProfile | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
