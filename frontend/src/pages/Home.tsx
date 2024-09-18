@@ -1,11 +1,10 @@
 import React from 'react';
-import Navbar from '../components/Navbar'; 
 
 const Home: React.FC = () => {
   return (
-    <div>
-      <Navbar />
-      <h1 className="text-2xl  font-sans">Home Page</h1>
+    <div style={{ fontFamily: 'Baloo 2, sans-serif' }} className='font-sans'>
+      
+      <h1> HELLO IM HOME PAGE </h1>
     </div>
   );
 };

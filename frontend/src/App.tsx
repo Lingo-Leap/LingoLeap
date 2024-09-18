@@ -3,6 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Routes, Route } from "react-router-dom";
 import type { RootState, AppDispatch } from './store/store';
 import Home from './pages/Home';
+import Navbar from './components/Navbar';
+import AchievementsPage from './pages/AchievementsPage';
+import LoginContainer from './components/LoginContainer';
+import HeroWelcome from './pages/HeroWelcome';
 import LanguageList from './components/LanguageList';
 import { fetchLanguagesRequest, fetchLanguagesSuccess, fetchLanguagesFailure } from '../src/redux/actions/languageAction'; 
 import './App.css';
@@ -36,22 +40,29 @@ function App() {
   }, [dispatch]);
 
   return (
+    <Provider store={store}>
     <div className="App">
-      <h1>Languages</h1>
+      {/* <HeroWelcome/> */}
+    {/* <Navbar /> */}
+     <h1>Languages</h1>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      <LanguageList languages={languages} />
+      <LanguageList languages={languages} /> 
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>
-    </div>
+    
+    {/* // <Progress />  */}
+   
+    <Routes>
+   <Route path="/" element={<Home />} />
+   <Route path="/home" element={<Home />} />
+    <Route path="/achievements" element={<AchievementsPage />} />
+   {/* <Route path="/profile" element ={<Profile />}/> */}
+   </Routes>
+      </div>
+    </Provider>
   );
-}
+};
 
-const Root = () => (
-  <Provider store={store}>
-    <App />
-  </Provider>
-);
-
-export default Root;
+export default App;

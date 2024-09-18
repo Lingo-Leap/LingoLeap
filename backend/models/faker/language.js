@@ -24,7 +24,7 @@ module.exports = {
     console.log('Languages to be seeded:', languages);
 
     try {
-      return await queryInterface.bulkCreate('Languages', languages);
+      return await queryInterface.bulkCreate( languages);
     } catch (error) {
       console.error('Error during bulkCreate:', error);
     }
