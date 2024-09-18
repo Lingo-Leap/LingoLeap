@@ -36,8 +36,8 @@ function App() {
   return (
      <Provider store={store}>
     <div className="App">
-      <HeroWelcome/>
-    {/* <Navbar /> */}
+      {/* <HeroWelcome/> */}
+    <Navbar />
       {/* <h1>Languages</h1>
       <button onClick={handleFetchLanguages}>Fetch Languages</button>
       {loading && <p>Loading...</p>}
@@ -52,6 +52,7 @@ function App() {
    <Route path="/" element={<Home />} />
    <Route path="/home" element={<Home />} />
     <Route path="/achievements" element={<AchievementsPage />} />
+    
    {/* <Route path="/profile" element ={<Profile />}/> */}
    </Routes>
       </div>
