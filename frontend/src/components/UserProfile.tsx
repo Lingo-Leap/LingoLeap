@@ -5,7 +5,11 @@ import { fetchUserProfile } from '../redux/actions/userActions';
 import '../UserProfile.css';
 const UserProfile = () => {
   const dispatch = useDispatch();
+<<<<<<< HEAD
   const userId = 8; 
+=======
+  const userId = 8;
+>>>>>>> ca7815dd32175fbbef3b3b467660203afe2c6b51
   const userProfile = useSelector((state: RootState) => state.user.profile);
 
   useEffect(() => {

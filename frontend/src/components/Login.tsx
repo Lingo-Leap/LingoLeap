@@ -18,7 +18,7 @@ const Login: React.FC = () => {
       .unwrap()
       .then((response) => {
         localStorage.setItem('authToken', response.token);  
-        navigate('/profile');
+        navigate('/home');
       })
       .catch((error) => {
         console.error('Login failed', error);
