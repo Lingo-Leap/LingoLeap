@@ -1,11 +1,7 @@
 
 
-import { LanguageActionTypes, FETCH_LANGUAGES_REQUEST, FETCH_LANGUAGES_SUCCESS, FETCH_LANGUAGES_FAILURE } from '../actions/languageActions'
-export interface Language {
-  id: number;
-  name: string;
-  description?: string;
-}
+import { Language } from '../types'; 
+import { LanguageActionTypes, FETCH_LANGUAGES_REQUEST, FETCH_LANGUAGES_SUCCESS, FETCH_LANGUAGES_FAILURE } from '../actions/languageActions';
 
 interface LanguageState {
   languages: Language[];
@@ -32,7 +28,7 @@ const languageReducer = (state = initialState, action: LanguageActionTypes): Lan
         loading: false,
         languages: action.payload,
       };
-    case FETCH_LANGUages_FAILURE:
+    case FETCH_LANGUAGES_FAILURE:
       return {
         ...state,
         loading: false,
