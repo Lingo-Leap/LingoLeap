@@ -39,25 +39,26 @@ function App() {
   return (
      <Provider store={store}>
     <div className="App">
-
-      <HeroWelcome/>
+{/* 
+      <HeroWelcome/> */}
     <Navbar /> 
-      <h1>Languages</h1>
+      {/* <h1>Languages</h1>
       <button onClick={handleFetchLanguages}>Fetch Languages</button>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      <LanguageList languages={languages} /> 
+      <LanguageList languages={languages} />  */}
    
-      <UserProfile />
+      {/* <UserProfile /> */}
 
     <Progress /> 
-    <LoginContainer/>
+
     <Routes>
    <Route path="/" element={<Home />} />
 
 
    <Route path="/home" element={<Home />} />
     <Route path="/achievements" element={<AchievementsPage />} />
+    <Route path="/profile" element={<UserProfile />} />
 
    </Routes>
       </div>
