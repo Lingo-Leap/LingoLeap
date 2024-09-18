@@ -15,9 +15,11 @@ import { fetchLanguagesRequest, fetchLanguagesSuccess, fetchLanguagesFailure } f
 import './App.css';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 function App() {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: ThunkDispatch<RootState, void, AnyAction> = useDispatch();
   const { languages, loading, error } = useSelector((state: RootState) => state.language);
 
   useEffect(() => {
