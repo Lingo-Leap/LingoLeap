@@ -13,6 +13,8 @@ import SignUp from './components/SignUp';
 import { store } from './store/store';
 import './App.css';
 import HeroWelcome from './pages/HeroWelcome';
+
+
 function App() {
   const dispatch: AppDispatch = useDispatch();
   const { languages, status, error } = useSelector((state: RootState) => state.language);

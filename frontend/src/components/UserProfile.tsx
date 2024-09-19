@@ -4,16 +4,17 @@ import { RootState } from '../store/store';
 import { fetchUserProfile } from '../redux/actions/userActions';
 import '../UserProfile.css';
 const UserProfile = () => {
-  const dispatch = useDispatch();
-<<<<<<< HEAD
-  const userId = 8; 
-=======
-  const userId = 8;
->>>>>>> ca7815dd32175fbbef3b3b467660203afe2c6b51
+const dispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.auth.userId);
   const userProfile = useSelector((state: RootState) => state.user.profile);
+  const status = useSelector((state: RootState) => state.user.status);
+  const error = useSelector((state: RootState) => state.user.error);
 
   useEffect(() => {
-    dispatch(fetchUserProfile(userId) as any);
+    if (userId) {
+      console.log("Dispatching fetchUserProfile with userId:", userId);
+      dispatch(fetchUserProfile(userId) as any);
+    }
   }, [dispatch, userId]);
 
   useEffect(() => {
@@ -23,8 +24,16 @@ const UserProfile = () => {
   
   }, [userProfile]);
 
-  if (!userProfile) {
+  if (status === 'loading') {
     return <div>Loading...</div>;
+  }
+
+  if (status === 'failed') {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!userProfile) {
+    return <div>No profile data available.</div>;
   }
 
   return (
