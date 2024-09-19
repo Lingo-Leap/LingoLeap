@@ -3,9 +3,15 @@ import axios from 'axios';
 
 export const fetchUserProfile = createAsyncThunk(
   'user/fetchUserProfile',
-  async (id: number, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:1274/api/user/${id}`);
+      const state = thunkAPI.getState() as any;
+      const token = state.auth.token;
+      const response = await axios.get(`http://localhost:1274/api/user/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }); 
       console.log("Fetched user profile:", response.data); // Debug log
       return response.data;
     } catch (error: any) {
