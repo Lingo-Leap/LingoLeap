@@ -4,12 +4,20 @@ require("dotenv").config();
 // MiddleWare Here we will need auth for now
 
 const authenticate = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[0];
-  if (!token) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+
+  const token = authHeader.split(" ")[1]; // Extract token from 'Bearer <token>'
+  if (!token) {
+    console.log("Token extraction failed");
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
+      console.log("Token verification failed");
       return res.status(401).json({ message: "Invalid token" });
     }
     console.log(
