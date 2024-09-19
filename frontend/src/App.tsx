@@ -12,6 +12,7 @@ import AchievementsPage from './pages/AchievementsPage';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import LogOutButton from './components/LogoutButton';
+import QuestionChoice from './components/QuestionChoice';
 import { store } from './store/store';
 import './App.css';
 
@@ -50,6 +51,7 @@ function App() {
 
           <Route path="/register" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/lesson" element={<QuestionChoice />}/>
         </Routes>
       </div>
     </Provider>
