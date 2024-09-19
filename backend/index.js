@@ -2,21 +2,21 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 require("./config/config");
-
+const path = require("path");
 require("./models");
 
 const userRouter = require("./routers/user.router");
-const languageRouter =  require("./routers/language.router")
+const languageRouter = require("./routers/language.router");
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/user", userRouter);
-app.use("/api/language" , languageRouter)
+app.use("/api/language", languageRouter);
 app.listen(port, () => {
   console.log(`Server running on port  http://localhost:${port}`);
 });
