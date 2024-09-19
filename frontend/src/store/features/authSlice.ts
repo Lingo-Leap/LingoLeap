@@ -16,7 +16,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Async Thunk for user login
+
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string, passwordHash: string }, thunkAPI) => {
