@@ -11,6 +11,7 @@ import AchievementsPage from './pages/AchievementsPage';
 import HeroWelcome from './pages/HeroWelcome';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
+import LogOutButton from './components/LogoutButton';
 import { store } from './store/store';
 import './App.css';
 
@@ -36,11 +37,13 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<HeroWelcome />} />
-          
+
           <Route element={<NavbarWrapper />}>
             <Route path="/home" element={<Home />} />
             <Route path="/achievements" element={<AchievementsPage />} />
             <Route path="/profile" element={<UserProfile />} />
+           
+            
           </Route>
 
           <Route path="/register" element={<SignUp />} />
