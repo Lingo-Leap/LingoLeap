@@ -19,6 +19,6 @@ UserRouter.put("/update/:id", updateUser);
 UserRouter.post("/create", createUser);
 UserRouter.get("/all", getAllUsers);
 // UserRouter.get("/:id", getUserProfile);
-UserRouter.get("/me", getCurrentUser);
+UserRouter.get("/me", authenticate, getCurrentUser);
 
 module.exports = UserRouter;
