@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { Provider } from "react-redux";
-import { Outlet, Route, Routes } from "react-router-dom";
-import "./App.css";
-import Login from "./components/Login";
-import Navbar from "./components/Navbar";
-import SignUp from "./components/SignUp";
-import UserProfile from "./components/UserProfile";
-import AchievementsPage from "./pages/AchievementsPage";
-import HeroWelcome from "./pages/HeroWelcome";
+import { RootState, AppDispatch } from "./store/store";
+import { fetchLanguages } from "../src/redux/actions/languageAction";
 import Home from "./pages/Home";
+import UserProfile from "./components/UserProfile";
+import Navbar from "./components/Navbar";
+import HeroWelcome from "./pages/HeroWelcome";
+import AchievementsPage from "./pages/AchievementsPage";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+import LanguageList from "./components/LanguageList";
+import LogOutButton from "./components/LogoutButton";
+import QuestionChoice from "./components/QuestionChoice";
 import { store } from "./store/store";
+import "./App.css";
 
 function App() {
   const NavbarWrapper: React.FC = () => {
@@ -35,6 +41,7 @@ function App() {
 
           <Route path="/register" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/lesson" element={<QuestionChoice />} />
         </Routes>
       </div>
     </Provider>

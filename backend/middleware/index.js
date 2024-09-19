@@ -20,10 +20,7 @@ const authenticate = (req, res, next) => {
       console.log("Token verification failed");
       return res.status(401).json({ message: "Invalid token" });
     }
-    console.log(
-      decoded,
-      "==================== decoded ================================="
-    );
+    console.log(decoded, "====== decoded ======");
     req.user = decoded;
     next();
   });

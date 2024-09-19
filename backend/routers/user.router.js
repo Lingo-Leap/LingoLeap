@@ -6,7 +6,7 @@ const authenticate = require("../middleware/index");
 const {
   userLogin,
   userSignup,
-  updateUser,
+  updateUserProfile,
   createUser,
   getAllUsers,
   // getUserProfile,
@@ -16,7 +16,7 @@ const {
 
 UserRouter.post("/register", upload.single("profilePicture"), userSignup);
 UserRouter.post("/login", userLogin);
-UserRouter.put("/update/:id", updateUser);
+UserRouter.put("/update/:id", authenticate, updateUserProfile);
 UserRouter.post("/create", createUser);
 UserRouter.get("/all", getAllUsers);
 // UserRouter.get("/:id", getUserProfile);
