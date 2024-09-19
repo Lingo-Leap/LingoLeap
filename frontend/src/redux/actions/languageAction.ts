@@ -5,7 +5,7 @@ import { Language } from '../types';
 export const fetchLanguages = createAsyncThunk<Language[], void>(
   'languages/fetchLanguages',
   async () => {
-    const response = await axios.get('/api/languages'); 
+    const response = await axios.get('http://localhost:1274/api/language/get'); 
     return response.data; 
   }
 );

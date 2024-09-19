@@ -16,7 +16,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Async Thunk for user login
+
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string, passwordHash: string }, thunkAPI) => {
@@ -84,7 +84,7 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(signup.rejected, (state, action) => {
-        state.loading = false;
+     state.loading = false;
         state.error = action.payload as string || 'Signup failed'; 
       });
   }

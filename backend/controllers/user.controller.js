@@ -137,46 +137,46 @@ module.exports = {
       res.status(500).json({ message: error.message });
     }
   },
-  getUserProfile: async (req, res) => {
-    const { id } = req.params;
+  // getUserProfile: async (req, res) => {
+  //   const { id } = req.params;
 
-    try {
-      const user = await User.findByPk(id, {
-        attributes: [
-          "username",
-          "email",
-          "profilePicture",
-          "role",
-          "totalPoints",
-        ],
-      });
+  //   try {
+  //     const user = await User.findByPk(id, {
+  //       attributes: [
+  //         "username",
+  //         "email",
+  //         "profilePicture",
+  //         "role",
+  //         "totalPoints",
+  //       ],
+  //     });
 
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
+  //     if (!user) {
+  //       return res.status(404).json({ error: "User not found" });
+  //     }
 
-      res.status(200).json(user);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ error: "An error occurred while fetching the user profile" });
-    }
-  },
+  //     res.status(200).json(user);
+  //   } catch (error) {
+  //     res
+  //       .status(500)
+  //       .json({ error: "An error occurred while fetching the user profile" });
+  //   }
+  // },
 
   getCurrentUser: async (req, res) => {
     try {
-      const authHeader = req.headers.authorization;
-
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "No token provided" });
+      const userId = req.user.id;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID not found in token" });
       }
-
-      const token = authHeader.split(" ")[1]; // Extract token from 'Bearer <token>'
-
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      const user = await User.findByPk(decoded.id, {
-        attributes: ["username", "email", "role", "profilePicture"],
+      const user = await User.findByPk(userId, {
+        attributes: [
+          "username",
+          "email",
+          "role",
+          "profilePicture",
+          "totalPoints",
+        ],
       });
 
       if (!user) {
