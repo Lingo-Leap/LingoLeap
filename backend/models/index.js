@@ -56,12 +56,15 @@ Choice.belongsTo(Question, { foreignKey: "questionId" });
 //     console.error("Error synchronizing models:", error);
 //   });
 
-// const userFaker= require("./faker/users").up(User,sequelize)
-// const languageFaker= require("./faker/language").up(Language,sequelize)
-// const lessonFaker= require("./faker/lesson").up(Lesson,sequelize)
-// const questionFaker= require("./faker/question").up(Question,sequelize)
-// const choiceFaker= require("./faker/choice").up(Choice,sequelize)
-// const achievementFaker= require("./faker/acheivement").up(Achievement,sequelize)
+// const userFaker = require("./faker/users").up(User, sequelize);
+// const languageFaker = require("./faker/language").up(Language, sequelize);
+// const lessonFaker = require("./faker/lesson").up(Lesson, sequelize);
+// const questionFaker = require("./faker/question").up(Question, sequelize);
+// const choiceFaker = require("./faker/choice").up(Choice, sequelize);
+// const achievementFaker = require("./faker/acheivement").up(
+//   Achievement,
+//   sequelize
+// );
 
 module.exports = {
   User,
