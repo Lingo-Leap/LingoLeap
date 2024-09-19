@@ -14,6 +14,10 @@ const Lesson = sequelize.define('Lesson', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  isCompleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
   type: {
     type: DataTypes.ENUM,
     values: ['multiple', 'order'], 
