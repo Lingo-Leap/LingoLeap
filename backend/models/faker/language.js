@@ -12,7 +12,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        name: 'Spanish',
+        name: 'Spanish', 
         description: 'Spanish language',
         
         languagePicture: faker.image.avatar(), 

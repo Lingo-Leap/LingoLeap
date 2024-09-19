@@ -12,18 +12,18 @@
 
 //   const { loading, error } = useSelector((state: RootState) => state.auth);
 
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     dispatch(login({ email, passwordHash: password }))
-//       .unwrap()
-//       .then((response) => {
-//         localStorage.setItem('authToken', response.token);  
-//         navigate('/home');
-//       })
-//       .catch((error) => {
-//         console.error('Login failed', error);
-//       });
-//   };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch(login({ email, passwordHash: password }))
+      .unwrap()
+      .then((response) => {
+        localStorage.setItem('authToken', response.token);  
+        navigate('/profile');
+      })
+      .catch((error) => {
+        console.error('Login failed', error);
+      });
+  };
 
 //   return (
 //     <div className="flex items-center justify-center h-screen bg-gray-100">
