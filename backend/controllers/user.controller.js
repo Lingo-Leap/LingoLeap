@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const upload = require('../config/multerConfig');
+const upload = require("../config/multerConfig");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -34,7 +34,7 @@ module.exports = {
       if (user) {
         return res.status(400).json({ message: "User already exists" });
       }
-     
+
       const hashedPassword = await bcrypt.hash(passwordHash, saltRounds);
 
       const profilePicture = req.file ? req.file.filename : null;
@@ -44,7 +44,7 @@ module.exports = {
         email,
         passwordHash: hashedPassword,
         role,
-        profilePicture
+        profilePicture,
       });
 
       await User.create({
@@ -52,7 +52,7 @@ module.exports = {
         email,
         passwordHash: hashedPassword,
         role,
-        profilePicture
+        profilePicture,
       });
 
       res.status(201).json({ message: "User created successfully" });
@@ -66,9 +66,11 @@ module.exports = {
     try {
       const { email, passwordHash } = req.body;
       const user = await User.findOne({ where: { email } });
+
       if (!user) {
         return res.status(400).json({ message: "User not found" });
       }
+
       const passwordMatch = await bcrypt.compare(
         passwordHash,
         user.passwordHash
@@ -76,14 +78,18 @@ module.exports = {
       if (!passwordMatch) {
         return res.status(400).json({ message: "Invalid password" });
       }
+
+      // Generate JWT token
       const token = jwt.sign(
         { id: user.id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
-      res.cookie("token", token, { httpOnly: true });
+
       res.status(200).json({
         message: "Login successful",
+        token,
+        userId: user.id,
         role: user.role,
         userName: user.username,
         email: user.email,
@@ -110,8 +116,14 @@ module.exports = {
   },
   createUser: async (req, res) => {
     try {
-      const { username, email, passwordHash, role } = req.body;
-      const user = await User.create({ username, email, passwordHash, role });
+      const { username, email, passwordHash, role, profilePicture } = req.body;
+      const user = await User.create({
+        username,
+        email,
+        passwordHash,
+        role,
+        profilePicture,
+      });
       res.status(201).json({ message: "User created successfully", user });
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -135,7 +147,7 @@ module.exports = {
           "email",
           "profilePicture",
           "role",
-          // "totalPoints",
+          "totalPoints",
         ],
       });
 
@@ -153,9 +165,8 @@ module.exports = {
 
   getCurrentUser: async (req, res) => {
     try {
-    
       const authHeader = req.headers.authorization;
-      
+
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({ message: "No token provided" });
       }
@@ -175,8 +186,9 @@ module.exports = {
       res.status(200).json(user);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "An error occurred while fetching the current user" });
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching the current user" });
     }
   },
-
 };

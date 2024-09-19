@@ -4,12 +4,14 @@ import axios from 'axios';
 
 interface AuthState {
   token: string | null;
+  userId: number | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   token: null,
+  userId: null,
   loading: false,
   error: null,
 };
@@ -56,6 +58,7 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.token = null;
+      state.userId = null;
     },
   },
   extraReducers: (builder) => {
@@ -67,6 +70,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token; // Store the token
+        state.userId = action.payload.userId;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;

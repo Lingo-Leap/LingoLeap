@@ -18,6 +18,7 @@ const Login: React.FC = () => {
       .unwrap()
       .then((response) => {
         localStorage.setItem('authToken', response.token);  
+        localStorage.setItem('userId', response.userId); 
         navigate('/home');
       })
       .catch((error) => {
