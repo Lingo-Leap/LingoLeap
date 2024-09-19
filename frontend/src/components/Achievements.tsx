@@ -1,13 +1,8 @@
-import React from 'react';
-
-
+import React from "react";
 
 const Achievements: React.FC = () => {
-  return (
-    <div>
-        hi i am achievement
-    </div>
-  );
+  const points = 5;
+  return <p>tets</p>;
 };
 
 export default Achievements;
