@@ -12,11 +12,12 @@ const lessonsRouter = express.Router();
  lessonsRouter.get('/:id', lessonsController.getById);
 
 
- lessonsRouter.put('/:id', lessonController.update);
+ lessonsRouter.put('/:id', lessonsController.update);
 
 
  lessonsRouter.delete('/:id', lessonsController.delete);
 
 module.exports =  lessonsRouter;
+
 
 

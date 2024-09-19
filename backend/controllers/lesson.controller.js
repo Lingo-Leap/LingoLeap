@@ -1,5 +1,6 @@
-const { Lesson } = require('../models/lesson.model');
-
+const Lesson = require('../models/lesson.model');
+const Question = require('../models/question.model')
+const Choice = require("../models/choice.model")
 module.exports = {
   
   async create(req, res) {
@@ -11,13 +12,13 @@ module.exports = {
     }
   },
 
-  async getAll(req, res) {
+  getAll: async (req, res) => {
     try {
       const lessons = await Lesson.findAll({
         include: [
           {
-            model: Question,
-            include: [Choice], // Ensure this is an array
+            model: Question, 
+            include: [Choice], 
           },
         ],
       });
@@ -25,15 +26,13 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
-  
-  ,
+  },
 
-  async getById(req, res) {
+  getById: async (req, res) => {
     try {
-      const lesson = await Lesson.findByPk(req.params.id)
+      const lesson = await Lesson.findByPk(req.params.id);
       if (!lesson) {
-        return res.status(404).json({ message: 'Lesson not found' })
+        return res.status(404).json({ message: 'Lesson not found' });
       }
       res.status(200).json(lesson);
     } catch (error) {
@@ -41,8 +40,7 @@ module.exports = {
     }
   },
 
-
-  async update(req, res) {
+  update: async (req, res) => {
     try {
       const [updated] = await Lesson.update(req.body, {
         where: { id: req.params.id },
@@ -57,8 +55,7 @@ module.exports = {
     }
   },
 
-
-  async delete(req, res) {
+  delete: async (req, res) => {
     try {
       const deleted = await Lesson.destroy({
         where: { id: req.params.id },
@@ -71,4 +68,4 @@ module.exports = {
       res.status(500).json({ error: error.message });
     }
   },
-}
+};

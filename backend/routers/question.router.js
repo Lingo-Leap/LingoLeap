@@ -4,10 +4,10 @@ const questionsController = require('../controllers/question.controller'); // Ad
 const questionRouter = express.Router();
 
 // Create a new question
-questionRouter.post('/', questionsController.create);
+questionRouter.post('/post', questionsController.create);
 
 // Get all questions
-questionRouter.get('/', questionsController.getAll);
+questionRouter.get('/get', questionsController.getAll);
 
 // Get a question by ID
 questionRouter.get('/:id', questionsController.getById);
