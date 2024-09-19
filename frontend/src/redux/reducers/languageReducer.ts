@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fetchLanguages } from '../actions/languageAction'; // Adjust the import path as needed
 import { Language } from '../types';
 
+
+
 interface LanguageState {
   languages: Language[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';

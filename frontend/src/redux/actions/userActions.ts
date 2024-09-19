@@ -3,9 +3,15 @@ import axios from 'axios';
 
 export const fetchUserProfile = createAsyncThunk(
   'user/fetchUserProfile',
-  async (id: number) => {
-    const response = await axios.get(`http://localhost:1274/api/user/${id}`);
-    return response.data;
+  async (id: number, thunkAPI) => {
+    try {
+      const response = await axios.get(`http://localhost:1274/api/user/${id}`);
+      console.log("Fetched user profile:", response.data); // Debug log
+      return response.data;
+    } catch (error: any) {
+      console.error("Error fetching user profile:", error); // Debug log
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
   }
 );
 
