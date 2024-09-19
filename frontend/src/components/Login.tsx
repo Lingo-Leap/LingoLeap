@@ -4,6 +4,16 @@ import { login } from '../store/features/authSlice';
 import { RootState, AppDispatch } from '../store/store'; 
 import { useNavigate } from 'react-router-dom';
 
+interface LoginResponse {
+  token: string;
+  userId: string;
+}
+
+// Optionally define the error type if you know what it looks like
+interface LoginError {
+  message: string; // Adjust based on your error structure
+}
+
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,18 +22,17 @@ const Login: React.FC = () => {
 
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(login({ email, passwordHash: password }))
-      .unwrap()
-      .then((response) => {
-        localStorage.setItem('authToken', response.token);  
-        localStorage.setItem('userId', response.userId); 
-        navigate('/home');
-      })
-      .catch((error) => {
-        console.error('Login failed', error);
-      });
+    try {
+      const response: LoginResponse = await dispatch(login({ email, passwordHash: password })).unwrap();
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('userId', response.userId);
+      navigate('/home');
+    } catch (err) {
+      const errorMessage = (err as LoginError).message || 'Login failed';
+      console.error('Login failed', errorMessage);
+    }
   };
 
   return (

@@ -11,20 +11,16 @@ import HeroWelcome from './pages/HeroWelcome';
 import AchievementsPage from './pages/AchievementsPage';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
+import LanguageList from './components/LanguageList';
 import LogOutButton from './components/LogoutButton';
+import QuestionChoice from './components/QuestionChoice';
 import { store } from './store/store';
 import './App.css';
 
 
 
 function App() {
-  const dispatch: AppDispatch = useDispatch();
-  const { languages, status, error } = useSelector((state: RootState) => state.language);
-
-  useEffect(() => {
-    dispatch(fetchLanguages());
-  }, [dispatch]);
-
+  
   const NavbarWrapper: React.FC = () => {
     return (
       <>
@@ -50,6 +46,7 @@ function App() {
 
           <Route path="/register" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/lesson" element={<QuestionChoice />}/>
         </Routes>
       </div>
     </Provider>
