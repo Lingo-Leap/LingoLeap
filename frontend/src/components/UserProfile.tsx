@@ -1,10 +1,11 @@
-
-
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { fetchUserProfile, updateUserProfile } from '../redux/actions/userActions';
-import '../UserProfile.css';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUserProfile,
+  updateUserProfile,
+} from "../redux/actions/userActions";
+import { RootState } from "../store/store";
+import "../UserProfile.css";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -12,24 +13,22 @@ const UserProfile = () => {
   const status = useSelector((state: RootState) => state.user.status);
   const error = useSelector((state: RootState) => state.user.error);
 
+  const userId = useState(localStorage.getItem("userId"));
+  console.log(userId, "=============userId================");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-const userId =useState(localStorage.getItem('userId'));
-console.log(userId , "=============userId================");
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [ currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
-
-  
   useEffect(() => {
-    console.log('Dispatching fetchUserProfile');
+    console.log("Dispatching fetchUserProfile ");
     dispatch(fetchUserProfile() as any);
   }, [dispatch]);
 
   useEffect(() => {
     if (userProfile) {
+      console.log("Profile Picture URL:", userProfile.profilePicture);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
     }
@@ -41,11 +40,23 @@ console.log(userId , "=============userId================");
     dispatch(updateUserProfile(updatedData as any) as any); // Dispatch the update action
   };
 
-  if (status === 'loading') {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const updatedData = {
+      username,
+      email,
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    };
+    dispatch(updateUserProfile(updatedData as any) as any); // Dispatch the update action
+  };
+
+  if (status === "loading") {
     return <div>Loading...</div>;
   }
 
-  if (status === 'failed') {
+  if (status === "failed") {
     return <div>Error: {error}</div>;
   }
 
@@ -54,6 +65,8 @@ console.log(userId , "=============userId================");
   }
 
   const profilePictureUrl = userProfile.profilePicture
+    ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
+    : "default-profile.png";
     ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
     : 'default-profile.png';
 
@@ -64,7 +77,7 @@ console.log(userId , "=============userId================");
       </div>
       <div className="profile-info">
         <h2>{userProfile.username}</h2>
-        <form className="update-form" onSubmit={handleSubmit} >
+        <form className="update-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
@@ -120,7 +133,7 @@ console.log(userId , "=============userId================");
           <button type="submit" className="update-btn">
             Update Profile
           </button>
-        </form>     
+        </form>
       </div>
     </div>
   );
