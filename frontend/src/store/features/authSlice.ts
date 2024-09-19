@@ -1,5 +1,6 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 import axios from 'axios';
 
 interface AuthState {
@@ -51,6 +52,23 @@ export const signup = createAsyncThunk(
     }
   }
 );
+export const updateUserProfile = createAsyncThunk(
+  'auth/updateUserProfile',
+  async (updatedData: { userId: string; username: string; email: string; currentPassword ?: string; newPassword ?: string; confirmPassword ?: string  }, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as RootState;
+      const response = await axios.put(`http://127.0.0.1:1274/api/user/profile/${updatedData.userId}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${state.auth.token}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 
 const authSlice = createSlice({
   name: 'auth',
@@ -83,10 +101,24 @@ const authSlice = createSlice({
       .addCase(signup.fulfilled, (state) => {
         state.loading = false;
       })
+
       .addCase(signup.rejected, (state, action) => {
      state.loading = false;
         state.error = action.payload as string || 'Signup failed'; 
-      });
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        // Optionally update the state with new profile data
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+  
   }
 });
 
