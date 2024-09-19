@@ -33,13 +33,18 @@ export const login = createAsyncThunk(
 // Async Thunk for user signup
 export const signup = createAsyncThunk(
   'auth/signup',
-  async (userData: { username: string, email: string, passwordHash: string, role: string }, thunkAPI) => {
+  async (formData: FormData, thunkAPI) => {
     try {
-      const response = await axios.post('http://127.0.0.1:1274/api/user/register', userData);
-      console.log("register success", response.data)
+      const response = await axios.post('http://127.0.0.1:1274/api/user/register', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log("Register success:", response.data);
 
       return response.data;
     } catch (error: any) {
+      console.error("Register failed:", error.response.data.message);
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }

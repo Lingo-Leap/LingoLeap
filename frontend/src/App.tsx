@@ -7,9 +7,12 @@ import { fetchLanguages } from '../src/redux/actions/languageAction';
 import Home from './pages/Home';
 import UserProfile from './components/UserProfile';
 import Navbar from './components/Navbar';
+import HeroWelcome from './pages/HeroWelcome';
 import AchievementsPage from './pages/AchievementsPage';
 import LanguageList from './components/LanguageList';
 import { store } from './store/store';
+import Login from './components/Login';
+import SignUp from './components/SignUp';
 import './App.css';
 
 function App() {
@@ -23,6 +26,8 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
+        {/* <Navbar/> */}
+        <HeroWelcome/>
         <h1>Languages</h1>
         {status === 'loading' && <p>Loading...</p>}
         {error && <p>Error: {error}</p>}
@@ -31,6 +36,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/achievements" element={<AchievementsPage />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/register" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </Provider>
