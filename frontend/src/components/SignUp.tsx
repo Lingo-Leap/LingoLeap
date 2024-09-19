@@ -10,7 +10,7 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
-  const [profilePicture, setProfilePicture] = useState<File | null>(null); // Handle profile picture
+  const [profilePicture, setProfilePicture] = useState<File | null>(null); 
 
   const dispatch = useDispatch<AppDispatch>(); 
   const navigate = useNavigate();
@@ -26,10 +26,10 @@ const Signup: React.FC = () => {
     formData.append('passwordHash', password);
     formData.append('role', role);
     if (profilePicture) {
-      formData.append('profilePicture', profilePicture); // Attach file if available
+      formData.append('profilePicture', profilePicture); 
     }
 
-    dispatch(signup(formData)) // Dispatch FormData
+    dispatch(signup(formData)) 
       .unwrap()
       .then(() => navigate('/login'))
       .catch(() => {});
