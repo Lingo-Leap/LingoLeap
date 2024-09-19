@@ -6,7 +6,7 @@ const HeroWelcome: React.FC = () => {
     <div className="relative h-screen flex flex-col justify-center items-center text-center bg-gradient-to-br from-[#007bff] to-[#f8f9fa]">
       <div className="absolute inset-0 bg-black opacity-10" />
 
-      {/* LINGOLEAP Header */}
+    
       <h1 className="absolute top-24 text-5xl font-bold text-white z-20">LINGOLEAP</h1>
 
       <h1 className="text-4xl md:text-5xl font-bold text-white z-20 mt-16">Unlock the World with Language</h1>

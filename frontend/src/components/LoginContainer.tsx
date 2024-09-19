@@ -11,6 +11,7 @@ const LoginContainer: React.FC = () => {
       <Link to="/login" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-5 rounded-full transition duration-200 shadow-md hover:shadow-lg">
         SIGN IN
       </Link>
+      
     </div>
   );
 }
