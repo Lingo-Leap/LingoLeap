@@ -1,34 +1,31 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { fetchUserProfile } from '../redux/actions/userActions';
-import '../UserProfile.css';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { fetchUserProfile } from "../redux/actions/userActions";
+import "../UserProfile.css";
 
 const UserProfile = () => {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const userProfile = useSelector((state: RootState) => state.user.profile);
   const status = useSelector((state: RootState) => state.user.status);
   const error = useSelector((state: RootState) => state.user.error);
-
+  // console.log(userProfile);
   useEffect(() => {
-   
-      console.log("Dispatching fetchUserProfile ");
-      dispatch(fetchUserProfile() as any);
-    
+    console.log("Dispatching fetchUserProfile ");
+    dispatch(fetchUserProfile() as any);
   }, [dispatch]);
 
   useEffect(() => {
     if (userProfile) {
-      console.log('Profile Picture URL:', userProfile.profilePicture);
+      console.log("Profile Picture URL:", userProfile.profilePicture);
     }
-  
   }, [userProfile]);
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return <div>Loading...</div>;
   }
 
-  if (status === 'failed') {
+  if (status === "failed") {
     return <div>Error: {error}</div>;
   }
 
@@ -37,8 +34,8 @@ const dispatch = useDispatch();
   }
 
   const profilePictureUrl = userProfile.profilePicture
-  ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
-  : 'default-profile.png';
+    ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
+    : "default-profile.png";
 
   return (
     <div className="user-profile">

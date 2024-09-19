@@ -1,0 +1,94 @@
+.achievement-container {
+  font-family: "Baloo 2, sans-serif";
+  text-align: center;
+  background: #f0f0f0;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-card {
+  margin: 20px auto;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 10px solid #d3d3d3;
+  position: relative;
+  animation: bounce 1.2s ease-in-out infinite;
+}
+
+.progress-circle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(#32cd32 50%, #d3d3d3 0%);
+  border-radius: 50%;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: #fff;
+}
+
+.points-container {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pop-in 0.8s ease-out;
+}
+
+.points-text {
+  margin-left: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.completed-text {
+  color: #ffd700;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.continue-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #ff4500;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
