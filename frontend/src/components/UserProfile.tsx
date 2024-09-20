@@ -5,7 +5,12 @@ import {
   updateUserProfile,
 } from "../redux/actions/userActions";
 import { RootState } from "../store/store";
-import "../UserProfile.css";
+import {
+  containerStyles,
+  buttonStyles,
+  profileStyles,
+  formStyles,
+} from "../assets/styles"; // Import des styles
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -13,8 +18,6 @@ const UserProfile = () => {
   const status = useSelector((state: RootState) => state.user.status);
   const error = useSelector((state: RootState) => state.user.error);
 
-  const userId = useState(localStorage.getItem("userId"));
-  console.log(userId, "=============userId================");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -22,23 +25,15 @@ const UserProfile = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    console.log("Dispatching fetchUserProfile ");
     dispatch(fetchUserProfile() as any);
   }, [dispatch]);
 
   useEffect(() => {
     if (userProfile) {
-      console.log("Profile Picture URL:", userProfile.profilePicture);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
     }
   }, [userProfile]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedData = { username , email, currentPassword, newPassword, confirmPassword };
-    dispatch(updateUserProfile(updatedData as any) as any); // Dispatch the update action
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +44,12 @@ const UserProfile = () => {
       newPassword,
       confirmPassword,
     };
-    dispatch(updateUserProfile(updatedData as any) as any); // Dispatch the update action
+    dispatch(updateUserProfile(updatedData as any) as any);
+  };
+
+  const handleLogOut = () => {
+    console.log("User logged out");
+    // Add logic for logout (e.g., clearing user session, navigating to login page)
   };
 
   if (status === "loading") {
@@ -67,71 +67,129 @@ const UserProfile = () => {
   const profilePictureUrl = userProfile.profilePicture
     ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
     : "default-profile.png";
-    ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
-    : 'default-profile.png';
 
   return (
-    <div className="user-profile">
-      <div className="profile-picture">
-        <img src={profilePictureUrl} alt="Profile" />
-      </div>
-      <div className="profile-info">
-        <h2>{userProfile.username}</h2>
-        <form className="update-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+    <div className={containerStyles.fullScreenCenter}>
+      {/* Profile Card */}
+      <div className={containerStyles.card}>
+        {/* Profile Picture and Username */}
+        <div className="flex items-center justify-center mb-6">
+          <div className={profileStyles.pictureContainer}>
+            <img
+              src={profilePictureUrl}
+              alt="Profile"
+              className={profileStyles.picture}
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <h2 className={profileStyles.username}>{userProfile.username}</h2>
+        </div>
+
+        {/* Form for Profile Update */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Section: Profile Information */}
+          <div className="space-y-4">
+            <h3 className={profileStyles.sectionTitle}>Profile Information</h3>
+            <div className={containerStyles.formGroup}>
+              <div className="form-group md:w-1/2">
+                <label htmlFor="username" className={formStyles.label}>
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className={formStyles.input}
+                />
+              </div>
+
+              <div className="form-group md:w-1/2">
+                <label htmlFor="email" className={formStyles.label}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={formStyles.input}
+                />
+              </div>
+            </div>
           </div>
-          {/* Displaying total points as read-only */}
-          <div className="form-group">
-            <label htmlFor="totalPoints">Total Points</label>
-            <p id="totalPoints">{userProfile.totalPoints || 0}</p>
+
+          {/* Section: Total Points */}
+          <div className="pt-6 space-y-4">
+            <h3 className={profileStyles.sectionTitle}>Achievements</h3>
+            <div className="p-4 bg-gray-700 rounded-lg shadow-lg form-group">
+              <label
+                htmlFor="totalPoints"
+                className="block text-xl font-bold text-yellow-400"
+              >
+                Total Points
+              </label>
+              <p
+                id="totalPoints"
+                className="block mt-2 text-3xl font-bold text-yellow-300"
+              >
+                {userProfile.totalPoints || 0}
+              </p>
+            </div>
           </div>
-          {/* New Password Input */}
-          <div className="form-group">
-            <label htmlFor="currentPassword">Current Password</label>
-            <input
-              type="password"
-              id="currentPassword"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
+
+          {/* Section: Password Update */}
+          <div className="pt-6 space-y-4">
+            <h3 className={profileStyles.sectionTitle}>Password Settings</h3>
+            <div className={containerStyles.formGroup}>
+              <div className="form-group md:w-1/2">
+                <label htmlFor="currentPassword" className={formStyles.label}>
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  id="currentPassword"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className={formStyles.input}
+                />
+              </div>
+
+              <div className="form-group md:w-1/2">
+                <label htmlFor="password" className={formStyles.label}>
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className={formStyles.input}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className={formStyles.label}>
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={formStyles.input}
+              />
+            </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="password">New Password</label>
-            <input
-              type="password"
-              id="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
-          {/* Confirm Password Input */}
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
-          <button type="submit" className="update-btn">
+
+          {/* Submit Button */}
+          <button type="submit" className={buttonStyles.primary}>
             Update Profile
+          </button>
+
+          {/* Mobile-Only Logout Button */}
+          <button onClick={handleLogOut} className={buttonStyles.logout}>
+            Logout
           </button>
         </form>
       </div>

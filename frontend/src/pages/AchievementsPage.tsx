@@ -1,8 +1,13 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { FaMedal, FaStar, FaTrophy } from "react-icons/fa"; // Icônes supplémentaires
-import "./Achievements.css"; // Pour les animations et le style
+import { FaMedal, FaStar, FaTrophy } from "react-icons/fa";
+import {
+  achievementsStyles,
+  buttonStyles,
+  containerStyles,
+  typographyStyles,
+} from "../assets/styles";
 
 interface DecodedToken {
   id: number;
@@ -19,7 +24,7 @@ interface LessonData {
 const Achievements: React.FC = () => {
   const [decodedToken, setDecodedToken] = useState<DecodedToken | null>(null);
   const [lessonData, setLessonData] = useState<LessonData | null>(null);
-  const [points, setPoints] = useState<number | null>(null); // New state for points
+  const [points, setPoints] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -47,13 +52,13 @@ const Achievements: React.FC = () => {
         axios
           .get(pointsUrl)
           .then((response) => {
-            setPoints(response.data.totalPoints); // Assuming the response format
+            setPoints(response.data.totalPoints);
           })
           .catch((error) => {
             console.error("Error fetching points data:", error);
           })
           .finally(() => {
-            setLoading(false); // Stop loading when all data is fetched
+            setLoading(false);
           });
       } catch (err) {
         console.error("Error decoding token:", err);
@@ -61,7 +66,7 @@ const Achievements: React.FC = () => {
       }
     } else {
       console.log("No token found in localStorage");
-      setLoading(false); // Stop loading if no token
+      setLoading(false);
     }
   }, []);
 
@@ -84,53 +89,72 @@ const Achievements: React.FC = () => {
   }
 
   const renderLevel = () => {
-    if (points! >= 1000) return <FaTrophy style={{ color: "#FFD700" }} />;
-    if (points! >= 500) return <FaMedal style={{ color: "#C0C0C0" }} />;
-    return <FaStar style={{ color: "#CD7F32" }} />;
+    if (points! >= 1000)
+      return <FaTrophy className={achievementsStyles.levelTrophy} />;
+    if (points! >= 500)
+      return <FaMedal className={achievementsStyles.levelMedal} />;
+    return <FaStar className={achievementsStyles.levelStar} />;
   };
 
   return (
-    <div className="achievement-container">
-      <h2>Your Achievements</h2>
-      {lessonData ? (
-        <>
-          <h3>Your Progress</h3>
-          <div className="achievement-card">
-            <div className="progress-circle">
-              <div
-                className="progress-bar"
-                style={{
-                  background: `conic-gradient(#32CD32 ${calculateProgress()}%, #D3D3D3 0%)`,
-                }}
-              />
-              <div className="progress-text">{calculateProgress()}%</div>
+    <div className={containerStyles.fullScreenCenter + " mt-0"}>
+      <div className={containerStyles.card}>
+        <h2 className={typographyStyles.heading1}>Your Achievements</h2>
+
+        <div className="flex flex-col space-y-8 md:flex-row md:space-y-0 ">
+          {/* Card: Progress */}
+          <div className={containerStyles.achievementsCard}>
+            <h3 className={typographyStyles.heading4}>Your Progress</h3>
+            <div className={containerStyles.progressContainer}>
+              <div className={achievementsStyles.progressCircle}>
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    background: `conic-gradient(#32CD32 ${calculateProgress()}%, #D3D3D3 0%)`,
+                  }}
+                ></div>
+                <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">
+                  {calculateProgress()}%
+                </div>
+              </div>
             </div>
           </div>
-        </>
-      ) : (
-        <p>No lesson data available</p>
-      )}
-      {isAchievementCompleted && (
-        <p className="completed-text">All lessons completed!</p>
-      )}
 
-      {/* Display total points with a champion icon */}
-
-      {points !== null && (
-        <>
-          {" "}
-          <h3>Your Points</h3>
-          <div className="points-container">
-            {renderLevel()}
-            <p className="points-text">{points} Points</p>
+          {/* Card: Lessons */}
+          <div className={containerStyles.achievementsCard}>
+            <h3 className={typographyStyles.heading4}>Lesson Data</h3>
+            <div className="text-lg font-semibold text-center text-white md:mt-10">
+              <p>Active Lessons: {lessonData?.activeLessons}</p>
+              <p>Completed Lessons: {lessonData?.completedLessons}</p>
+            </div>
+            {isAchievementCompleted && (
+              <p className="mt-4 text-lg font-semibold text-center text-green-500">
+                All lessons completed!
+              </p>
+            )}
           </div>
-        </>
-      )}
 
-      {/* Bouton pour continuer la progression */}
-      {!isAchievementCompleted && (
-        <button className="continue-button">Continue Your Progress</button>
-      )}
+          {/* Card: Points */}
+          <div className={containerStyles.achievementsCard}>
+            <h3 className={typographyStyles.heading4}>Your Points</h3>
+            <div className="flex items-center justify-center mb-6 md:mt-10">
+              {renderLevel()}
+              <p className="ml-4 text-2xl font-bold text-yellow-300">
+                {points} Points
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Continue Button */}
+        {!isAchievementCompleted && (
+          <div className="flex justify-center mt-8">
+            <button className={buttonStyles.primary}>
+              Continue Your Progress
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
