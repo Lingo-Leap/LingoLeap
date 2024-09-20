@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchUserProfile,
-  updateUserProfile,
-} from "../redux/actions/userActions";
-import { RootState } from "../store/store";
-import "../UserProfile.css";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { fetchUserProfile, updateUserProfile, updateUserPassword } from '../redux/actions/userActions';
+import '../UserProfile.css';
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -13,13 +10,13 @@ const UserProfile = () => {
   const status = useSelector((state: RootState) => state.user.status);
   const error = useSelector((state: RootState) => state.user.error);
 
-  const userId = useState(localStorage.getItem("userId"));
+  const userId = useState(localStorage.getItem('userId'));
   console.log(userId, "=============userId================");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     console.log("Dispatching fetchUserProfile ");
@@ -34,25 +31,23 @@ const UserProfile = () => {
     }
   }, [userProfile]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedData = { username , email, currentPassword, newPassword, confirmPassword };
+    const updatedData = { username, email };
     dispatch(updateUserProfile(updatedData as any) as any); // Dispatch the update action
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedData = {
-      username,
-      email,
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    };
-    dispatch(updateUserProfile(updatedData as any) as any); // Dispatch the update action
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    const updatedData = { currentPassword, newPassword };
+    dispatch(updateUserPassword(updatedData as any) as any); // Dispatch the update action
   };
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return <div>Loading...</div>;
   }
 
@@ -67,17 +62,15 @@ const UserProfile = () => {
   const profilePictureUrl = userProfile.profilePicture
     ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
     : "default-profile.png";
-    ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
-    : 'default-profile.png';
-
+ 
   return (
     <div className="user-profile">
       <div className="profile-picture">
         <img src={profilePictureUrl} alt="Profile" />
       </div>
       <div className="profile-info">
-        <h2>{userProfile.username}</h2>
-        <form className="update-form" onSubmit={handleSubmit}>
+        <h2>{userProfile.username }</h2>
+        <form className="update-form" onSubmit={handleProfileSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
@@ -96,12 +89,11 @@ const UserProfile = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          {/* Displaying total points as read-only */}
-          <div className="form-group">
-            <label htmlFor="totalPoints">Total Points</label>
-            <p id="totalPoints">{userProfile.totalPoints || 0}</p>
-          </div>
-          {/* New Password Input */}
+          <button type="submit" className="update-btn">
+            Update Profile
+          </button>
+        </form>
+        <form className="update-form" onSubmit={handlePasswordSubmit}>
           <div className="form-group">
             <label htmlFor="currentPassword">Current Password</label>
             <input
@@ -109,18 +101,21 @@ const UserProfile = () => {
               id="currentPassword"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
+              autoComplete="current-password"
+
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">New Password</label>
+            <label htmlFor="newPassword">New Password</label>
             <input
               type="password"
-              id="password"
+              id="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              autoComplete="new-password"
+
             />
           </div>
-          {/* Confirm Password Input */}
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input
@@ -128,10 +123,12 @@ const UserProfile = () => {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
+
             />
           </div>
           <button type="submit" className="update-btn">
-            Update Profile
+            Update Password
           </button>
         </form>
       </div>

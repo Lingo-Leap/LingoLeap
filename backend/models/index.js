@@ -53,8 +53,12 @@ LessonsUsers.belongsTo(Lesson, { foreignKey: "lessonId" });
 // });
 
 // sequelize
+<<<<<<< HEAD
+//   .sync({ force: false })
+=======
 //   .sync({ force: false, alter: true })
 
+>>>>>>> 47deec91b3049b16c79ac9d422e0309ca554fa6e
 //   .then(() => {
 //     console.log("All models were synchronized successfully.");
 //   })
