@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import AnswerSpace from './AnswerSpace';
 
 const Choices: React.FC = () => {
-  const questionType: 'multiple' = 'multiple'; // Set to 'multiple'
+  const questionType: 'ordering' = 'ordering'; // Set to 'multiple'
 
   // Original ordering words
   const originalOrderingWords = [
@@ -53,7 +53,7 @@ const Choices: React.FC = () => {
       <AnswerSpace selectedWords={selectedWords} onWordReturn={handleWordReturn} />
 
       {/* Render Ordering Words */}
-      {/* {questionType === 'ordering' && (
+      {questionType === 'ordering' && (
         <div className="flex flex-wrap justify-center space-x-2 mt-4">
           {orderingWords.map((word, index) => (
             <div
@@ -65,10 +65,10 @@ const Choices: React.FC = () => {
             </div>
           ))}
         </div>
-      )} */}
+      )}
 
       {/* Render Multiple Choice Options */}
-      {questionType === 'multiple' && (
+      {/* {questionType === 'multiple' && (
         <div className="flex flex-col space-y-2 mt-4">
           {options.map((option, index) => (
             <div
@@ -80,7 +80,7 @@ const Choices: React.FC = () => {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

@@ -9,7 +9,7 @@ const AnswerSpace: React.FC<{ selectedWords: string[], onWordReturn: (word: stri
             <div
               key={index}
               className="bg-blue-200 text-gray-800 rounded-md p-2 mb-1 cursor-pointer"
-              onClick={() => onWordReturn(word)} // Return word on click
+              onClick={() => onWordReturn(word)}
             >
               {word}
             </div>
