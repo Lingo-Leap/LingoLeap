@@ -1,8 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { fetchUserProfile, updateUserProfile, updateUserPassword } from '../redux/actions/userActions';
-import '../UserProfile.css';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  buttonStyles,
+  containerStyles,
+  formStyles,
+  profileStyles,
+  spacingStyles,
+} from "../assets/styles";
+import {
+  fetchUserProfile,
+  updateUserPassword,
+  updateUserProfile,
+} from "../redux/actions/userActions";
+import { RootState } from "../store/store";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -10,22 +20,22 @@ const UserProfile = () => {
   const status = useSelector((state: RootState) => state.user.status);
   const error = useSelector((state: RootState) => state.user.error);
 
-  const userId = useState(localStorage.getItem('userId'));
+  // Fetch the userId from localStorage
+  const userId = localStorage.getItem("userId");
   console.log(userId, "=============userId================");
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    console.log("Dispatching fetchUserProfile ");
     dispatch(fetchUserProfile() as any);
   }, [dispatch]);
 
   useEffect(() => {
     if (userProfile) {
-      console.log("Profile Picture URL:", userProfile.profilePicture);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
     }
@@ -34,7 +44,7 @@ const UserProfile = () => {
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const updatedData = { username, email };
-    dispatch(updateUserProfile(updatedData as any) as any); // Dispatch the update action
+    dispatch(updateUserProfile(updatedData as any) as any);
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -44,10 +54,14 @@ const UserProfile = () => {
       return;
     }
     const updatedData = { currentPassword, newPassword };
-    dispatch(updateUserPassword(updatedData as any) as any); // Dispatch the update action
+    dispatch(updateUserPassword(updatedData as any) as any);
   };
 
-  if (status === 'loading') {
+  const handleLogOut = () => {
+    // Log out logic here
+  };
+
+  if (status === "loading") {
     return <div>Loading...</div>;
   }
 
@@ -62,75 +76,99 @@ const UserProfile = () => {
   const profilePictureUrl = userProfile.profilePicture
     ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
     : "default-profile.png";
- 
+
   return (
-    <div className="user-profile">
-      <div className="profile-picture">
-        <img src={profilePictureUrl} alt="Profile" />
-      </div>
-      <div className="profile-info">
-        <h2>{userProfile.username }</h2>
-        <form className="update-form" onSubmit={handleProfileSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <button type="submit" className="update-btn">
-            Update Profile
-          </button>
-        </form>
-        <form className="update-form" onSubmit={handlePasswordSubmit}>
-          <div className="form-group">
-            <label htmlFor="currentPassword">Current Password</label>
-            <input
-              type="password"
-              id="currentPassword"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              autoComplete="current-password"
+    <div className={containerStyles.fullWidthCenter}>
+      <div className={containerStyles.card}>
+        <div className={profileStyles.pictureContainer}>
+          <img
+            src={profilePictureUrl}
+            alt="Profile"
+            className={profileStyles.picture}
+          />
+        </div>
+        <div className={spacingStyles.marginAuto}>
+          <h2 className={profileStyles.username}>{userProfile.username}</h2>
+          <form className="update-form" onSubmit={handleProfileSubmit}>
+            <div className="form-group">
+              <label htmlFor="username" className={formStyles.label}>
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className={formStyles.input}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email" className={formStyles.label}>
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={formStyles.input}
+              />
+            </div>
+            <button type="submit" className={buttonStyles.primary}>
+              Update Profile
+            </button>
+          </form>
 
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="newPassword">New Password</label>
-            <input
-              type="password"
-              id="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              autoComplete="new-password"
+          <form className="update-form" onSubmit={handlePasswordSubmit}>
+            <div className="form-group">
+              <label htmlFor="currentPassword" className={formStyles.label}>
+                Current Password
+              </label>
+              <input
+                type="password"
+                id="currentPassword"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className={formStyles.input}
+                autoComplete="current-password"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newPassword" className={formStyles.label}>
+                New Password
+              </label>
+              <input
+                type="password"
+                id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className={formStyles.input}
+                autoComplete="new-password"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className={formStyles.label}>
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={formStyles.input}
+                autoComplete="new-password"
+              />
+            </div>
+            <button type="submit" className={buttonStyles.secondary}>
+              Update Password
+            </button>
 
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
-
-            />
-          </div>
-          <button type="submit" className="update-btn">
-            Update Password
-          </button>
-        </form>
+            {/* Mobile-Only Logout Button */}
+            <button onClick={handleLogOut} className={buttonStyles.logout}>
+              Logout
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

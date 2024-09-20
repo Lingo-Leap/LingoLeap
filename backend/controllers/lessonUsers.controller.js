@@ -80,7 +80,7 @@ module.exports = {
   },
   // Compter les leçons terminées et non terminées
   countByIsCompleted: async (req, res) => {
-    console.log("ok");
+    // console.log("ok");
     try {
       const isCompleted = req.query.isCompleted === "true";
       const count = await LessonsUsers.count({

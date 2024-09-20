@@ -1,3 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Alata&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Alata&family=Carter+One&display=swap");
+
+* {
+  font-family: "Alata", sans-serif;
+}
 .App {
   text-align: center;
 }
@@ -35,4 +41,79 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.logoTitle {
+  font-family: "Carter One", system-ui;
+}
+
+@keyframes bounceSlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 3s infinite;
+}
+
+/* App.css */
+.page-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.page-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.page-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* App.css */
+
+/* App.css */
+
+/* Animation pour l'entrée (glissement vers le bas) */
+@keyframes slideDownIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animation pour la sortie (glissement vers le haut) */
+@keyframes slideUpOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20%);
+  }
+}
+
+/* Classes CSS à appliquer dynamiquement */
+.fade-enter {
+  animation: slideDownIn 0.5s ease forwards;
+}
+
+.fade-exit {
+  animation: slideUpOut 0.5s ease forwards;
 }

@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Provider } from "react-redux";
-import { RootState, AppDispatch } from "./store/store";
-import { fetchLanguages } from "../src/redux/actions/languageAction";
+import { store } from "./store/store";
 import Home from "./pages/Home";
 import UserProfile from "./components/UserProfile";
 import Navbar from "./components/Navbar";
@@ -11,18 +9,20 @@ import HeroWelcome from "./pages/HeroWelcome";
 import AchievementsPage from "./pages/AchievementsPage";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import LanguageList from "./components/LanguageList";
-import LogOutButton from "./components/LogoutButton";
 import QuestionChoice from "./components/QuestionChoice";
-import { store } from "./store/store";
 import "./App.css";
 
 function App() {
   const NavbarWrapper: React.FC = () => {
     return (
       <>
+        {/* Navbar Component */}
         <Navbar />
-        <Outlet />
+        {/* Outlet for rendering child routes */}
+        <div className="pb-24 mt-28 md:pb-12 md:mt-12">
+          {/* Padding for mobile views and top margin to ensure space for mobile */}
+          <Outlet />
+        </div>
       </>
     );
   };
@@ -33,6 +33,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HeroWelcome />} />
 
+          {/* NavbarWrapper for routes with the Navbar */}
           <Route element={<NavbarWrapper />}>
             <Route path="/home" element={<Home />} />
             <Route path="/achievements" element={<AchievementsPage />} />
