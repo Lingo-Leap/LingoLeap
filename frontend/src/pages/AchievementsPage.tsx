@@ -101,7 +101,7 @@ const Achievements: React.FC = () => {
       <div className={containerStyles.card}>
         <h2 className={typographyStyles.heading1}>Your Achievements</h2>
 
-        <div className="flex flex-col space-y-8 md:flex-row md:space-y-0 ">
+        <div className="flex flex-col gap-2 space-y-8 md:flex-row md:space-y-0 ">
           {/* Card: Progress */}
           <div className={containerStyles.achievementsCard}>
             <h3 className={typographyStyles.heading4}>Your Progress</h3>

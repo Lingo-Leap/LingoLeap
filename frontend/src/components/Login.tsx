@@ -42,7 +42,7 @@ const Login: React.FC = () => {
       {/* Login Box */}
       <div className="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-2xl">
         <h2 className="mb-6 text-3xl font-bold text-center text-white">
-          Connexion
+          Login
         </h2>
 
         {/* Error Message */}
@@ -51,7 +51,7 @@ const Login: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="email"
-            placeholder="E-mail ou nom d'utilisateur"
+            placeholder="Email or Username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-3 mb-4 text-white placeholder-gray-400 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
 
           <input
             type="password"
-            placeholder="Mot de passe"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-3 mb-4 text-white placeholder-gray-400 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -73,7 +73,7 @@ const Login: React.FC = () => {
             className="w-full p-3 font-bold text-white transition duration-300 bg-blue-500 rounded-md hover:bg-blue-600"
             disabled={loading}
           >
-            {loading ? "Connexion..." : "Se connecter"}
+            {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
 
