@@ -7,6 +7,7 @@ const {
   userLogin,
   userSignup,
   updateUserProfile,
+  updateUserPassword,
   createUser,
   getAllUsers,
   // getUserProfile,
@@ -17,6 +18,7 @@ const {
 UserRouter.post("/register", upload.single("profilePicture"), userSignup);
 UserRouter.post("/login", userLogin);
 UserRouter.put("/update/:id", authenticate, updateUserProfile);
+UserRouter.put("/update-password/:id", authenticate, updateUserPassword);
 UserRouter.post("/create", createUser);
 UserRouter.get("/all", getAllUsers);
 // UserRouter.get("/:id", getUserProfile);
