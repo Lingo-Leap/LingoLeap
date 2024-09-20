@@ -6,6 +6,7 @@ import { store } from "./store/store";
 
 import "./App.css";
 import Login from "./components/Login";
+
 import Navbar from "./components/Navbar";
 import QuestionChoice from "./components/QuestionChoice";
 import SignUp from "./components/SignUp";
@@ -30,6 +31,7 @@ const App: React.FC = () => {
   const { isAuthenticated, logoutUser, isAdmin } = useAuth(); // Auth context
 
   console.log(isAdmin, "Admin check");
+
 
   // NavbarWrapper component for routes with the navigation bar
   const NavbarWrapper: React.FC = () => {
@@ -118,6 +120,8 @@ const App: React.FC = () => {
               }
             />
           </Route>
+
+
         </Routes>
       </div>
     </Provider>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import {
   buttonStyles,
   containerStyles,
@@ -16,6 +17,7 @@ import { RootState } from "../store/store";
 
 const UserProfile: React.FC = () => {
   const dispatch = useDispatch();
+
   const {
     profile: userProfile,
     status,
@@ -26,6 +28,7 @@ const UserProfile: React.FC = () => {
   const userId = useMemo(() => localStorage.getItem("userId"), []);
   console.log(userId, "=============userId================");
 
+
   const [formState, setFormState] = useState({
     username: "",
     email: "",
@@ -34,8 +37,10 @@ const UserProfile: React.FC = () => {
     confirmPassword: "",
   });
 
+
   const { username, email, currentPassword, newPassword, confirmPassword } =
     formState;
+
 
   useEffect(() => {
     if (!userProfile) {
@@ -52,7 +57,6 @@ const UserProfile: React.FC = () => {
       }));
     }
   }, [userProfile]);
-
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormState((prev) => ({
@@ -60,6 +64,7 @@ const UserProfile: React.FC = () => {
       [id]: value,
     }));
   }, []);
+
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,14 +77,18 @@ const UserProfile: React.FC = () => {
       alert("Passwords do not match");
       return;
     }
+
     dispatch(
       updateUserPassword({ currentPassword, newPassword } as any) as any
     );
+
   };
 
   const handleLogOut = () => {
     // Log out logic here
   };
+ 
+ 
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -106,7 +115,9 @@ const UserProfile: React.FC = () => {
             alt="Profile"
             className={profileStyles.picture}
           />
+        
         </div>
+        
         <div className={spacingStyles.marginAuto}>
           <h2 className={profileStyles.username}>{userProfile.username}</h2>
           <form className="update-form" onSubmit={handleProfileSubmit}>
