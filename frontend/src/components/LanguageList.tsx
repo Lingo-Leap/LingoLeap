@@ -20,7 +20,7 @@ const LanguageCard: React.FC<LanguageCardProps> = ({ flag, name, onSelect }) => 
 };
 
 interface LanguageListProps {
-  languages: Language[];
+  languages: Language[]; // Expecting an array of Language objects
 }
 
 const LanguageList: React.FC<LanguageListProps> = ({ languages }) => {

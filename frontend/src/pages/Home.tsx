@@ -1,20 +1,34 @@
-import React, { useEffect } from "react";
-import Header from "../components/Header";
-import LessonNode from "../components/LessonNode";
-import LanguageList from "../components/LanguageList";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchLanguages } from "../redux/actions/languageAction";
-import { RootState, AppDispatch } from "../store/store";
+
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
+import LanguageList from '../components/LanguageList';
+import LessonNode from '../components/LessonNode';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchLanguages } from '../redux/actions/languageAction';
+
+import { RootState, AppDispatch } from '../store/store';
 
 const Home: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { languages, status, error } = useSelector(
     (state: RootState) => state.language
   );
+  const lessons = useSelector((state: RootState) => state.lessons.lessons) || [];
+
 
   useEffect(() => {
     dispatch(fetchLanguages());
   }, [dispatch]);
+
+  const navigate = useNavigate();
+  
+
+
+  const handleLessonClick = (lessonId: number) => {
+    navigate(`/lesson/${lessonId}`);
+  };
+
 
   return (
     <div className="min-h-screen font-sans text-white bg-gradient-to-br from-gray-900 to-gray-800">
@@ -50,5 +64,6 @@ const Home: React.FC = () => {
     </div>
   );
 };
+
 
 export default Home;

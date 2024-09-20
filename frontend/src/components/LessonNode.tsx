@@ -1,24 +1,38 @@
-import React from 'react';
-import { Link } from "react-router-dom";
 
-const LessonNode: React.FC = () => {
-  const handleClick = () => {
-    console.log('Lesson started');
-  };
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from "react-router-dom";
+import { fetchLessons } from '../redux/actions/lessonAction';
+import { RootState, AppDispatch } from '../store/store';
+import Lesson from "./Lesson"
+
+
+
+const Lessons: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+    const { lessons, status, error } = useSelector((state: RootState) => state.lessons);
+
+  useEffect(() => {
+    dispatch(fetchLessons());
+  }, [dispatch]);
 
   return (
-<div className="flex flex-col items-center justify-center p-4">
-  <Link to="/lesson">
-    <div
-      className="flex items-center justify-center w-24 h-24 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition duration-300 cursor-pointer"
-      onClick={handleClick}
-    >
-      <span className="text-center text-lg font-semibold">Lesson 1</span>
+    <div>
+       <Link to="/lesson">
+      <h1>Leçons</h1>
+      {status === 'loading' && <div>Chargement...</div>}
+      {status === 'failed' && <div>Erreur: {error}</div>}
+      {status === 'succeeded' && (
+        <ul>
+          {lessons.map((lesson : any) => (
+         
+            < Lesson lesson={lesson} />
+          ))}
+        </ul>
+      )}
+      </Link>
     </div>
-  </Link>
-  <p className="mt-2 text-gray-700 font-medium">Click to start your lesson!</p>
-</div>
   );
 };
 
-export default LessonNode;
+export default Lessons;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Progress from '../components/Progress';
-import Questions from '../components/Questions';
+// import Questions from '../components/Questions';
 import Choices from '../components/Choices';
 const QuestionChoice: React.FC = () => {
   return (
@@ -10,7 +10,7 @@ const QuestionChoice: React.FC = () => {
         </div>
               <div className="mt-8"> {/* Add margin-bottom for spacing between Progress and Questions */}
 
-        <Questions />
+        {/* <Questions /> */}
       </div>
            
       <div className="mt-8"> {/* Add margin-bottom for spacing between Progress and Questions */}

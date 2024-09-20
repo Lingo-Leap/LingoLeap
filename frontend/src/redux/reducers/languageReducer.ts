@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchLanguages } from '../actions/languageAction'; // Adjust the import path as needed
+import { fetchLanguages } from '../actions/languageAction';
 import { Language } from '../types';
-
-
 
 interface LanguageState {
   languages: Language[];
@@ -28,7 +26,7 @@ const languageSlice = createSlice({
       .addCase(fetchLanguages.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.languages = action.payload;
-        state.error = null; // Clear any previous errors
+        state.error = null; 
       })
       .addCase(fetchLanguages.rejected, (state, action) => {
         state.status = 'failed';

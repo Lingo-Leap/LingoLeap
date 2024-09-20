@@ -12,8 +12,9 @@ import Navbar from "./components/Navbar";
 import HeroWelcome from "./pages/HeroWelcome";
 import AchievementsPage from "./pages/AchievementsPage";
 import Login from "./components/Login";
+import AdminDashboard from "./pages/AdminDashboard";
 import SignUp from "./components/SignUp";
-import QuestionChoice from "./components/QuestionChoice";
+// import QuestionChoice from "./components/QuestionChoice";
 import "./App.css";
 
 function App() {
@@ -46,11 +47,13 @@ function App() {
 
           <Route path="/register" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/lesson" element={<QuestionChoice />} />
+          <Route path ="/admin" element={<AdminDashboard/>}/>
+          {/* <Route path="/lesson" element={<QuestionChoice />} /> */}
+
         </Routes>
       </div>
     </Provider>
   );
-}
+};
 
 export default App;
