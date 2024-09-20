@@ -14,7 +14,7 @@ const Home: React.FC = () => {
   const { languages, status, error } = useSelector(
     (state: RootState) => state.language
   );
-  const lessons = useSelector((state: RootState) => state.lessons.items) || [];
+  const lessons = useSelector((state: RootState) => state.lessons.lessons) || [];
 
 
   useEffect(() => {

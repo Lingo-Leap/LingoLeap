@@ -2,14 +2,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLessons } from '../redux/actions/lessonAction';
-import { RootState } from '../store/store';
+import { RootState, AppDispatch } from '../store/store';
 import Lesson from "./Lesson"
 
 
 
 const Lessons: React.FC = () => {
-  const dispatch = useDispatch();
-  const { lessons, status, error } = useSelector((state: RootState) => state.lessons);
+  const dispatch: AppDispatch = useDispatch();
+    const { lessons, status, error } = useSelector((state: RootState) => state.lessons);
 
   useEffect(() => {
     dispatch(fetchLessons());

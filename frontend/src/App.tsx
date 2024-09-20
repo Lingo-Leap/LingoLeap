@@ -9,7 +9,7 @@ import HeroWelcome from "./pages/HeroWelcome";
 import AchievementsPage from "./pages/AchievementsPage";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import QuestionChoice from "./components/QuestionChoice";
+// import QuestionChoice from "./components/QuestionChoice";
 import "./App.css";
 
 function App() {

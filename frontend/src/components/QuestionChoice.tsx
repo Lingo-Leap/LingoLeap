@@ -1,25 +1,25 @@
-import React from "react";
-import Questions from "./Questions";
+// import React from "react";
+// import Questions from "./Questions";
 
-interface Choice {
-  id: number;
-  text: string;
-  isCorrect: boolean;
-}
+// interface Choice {
+//   id: number;
+//   text: string;
+//   isCorrect: boolean;
+// }
 
-interface QuestionChoiceProps {
-  choice: Choice;
-}
+// interface QuestionChoiceProps {
+//   choice: Choice;
+// }
 
-const QuestionChoice: React.FC<QuestionChoiceProps> = ({ choice }) => {
-  return (
-    <div className="choice-item">
-      <p>{choice.text}</p>
+// const QuestionChoice: React.FC<QuestionChoiceProps> = ({ choice }) => {
+//   return (
+//     <div className="choice-item">
+//       <p>{choice.text}</p>
 
-    </div>
-  );
-};
+//     </div>
+//   );
+// };
 
-export default QuestionChoice;
-
+// export default QuestionChoice;
+export {}
 
