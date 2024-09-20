@@ -41,13 +41,13 @@ export const updateUserProfile = createAsyncThunk(
 
 export const updateUserPassword = createAsyncThunk(
   'user/updateUserPassword',
-  async (updatedData: {  currentPassword: string; newPassword: string }, thunkAPI) => {
+  async (updatedData: { id: string; currentPassword: string; newPassword: string }, thunkAPI) => {
     try {
       
       const state = thunkAPI.getState() as any;
       const token = state.auth.token;
-      console.log("Sending password update request:", updatedData);
-      const response = await axios.put(`http://localhost:1274/api/user/update/password`, updatedData, {
+      // console.log("Sending password update request:", updatedData);
+      const response = await axios.put(`http://localhost:1274/api/user/update-password/${updatedData.id}` , updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -60,3 +60,4 @@ export const updateUserPassword = createAsyncThunk(
     }
   }
 );
+

@@ -1,7 +1,7 @@
 const User = require("../models/user.model");
 const upload = require("../config/multerConfig");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const saltRounds = 10;
 
 module.exports = {
@@ -35,7 +35,7 @@ module.exports = {
         return res.status(400).json({ message: "User already exists" });
       }
 
-      const hashedPassword = await bcrypt.hash(passwordHash, saltRounds);
+      const hashedPassword = await bcryptjs.hash(passwordHash, saltRounds);
 
       const profilePicture = req.file ? req.file.filename : null;
 
@@ -71,7 +71,7 @@ module.exports = {
         return res.status(400).json({ message: "User not found" });
       }
 
-      const passwordMatch = await bcrypt.compare(
+      const passwordMatch = await bcryptjs.compare(
         passwordHash,
         user.passwordHash
       );
@@ -123,17 +123,17 @@ module.exports = {
     try {
       const userId = req.user.id;
       const { currentPassword, newPassword } = req.body;
-      console.log("Received password update request:", {
-        userId,
-        currentPassword,
-        newPassword,
-      });
+      // console.log("Received password update request:", {
+      //   userId,
+      //   currentPassword,
+      //   newPassword,
+      // });
       const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const passwordMatch = await bcrypt.compare(
+      const passwordMatch = await bcryptjs.compare(
         currentPassword,
         user.passwordHash
       );
@@ -145,7 +145,7 @@ module.exports = {
           .json({ message: "Current password is incorrect" });
       }
 
-      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      const hashedPassword = await bcryptjs.hash(newPassword, saltRounds);
       await user.update({ passwordHash: hashedPassword });
 
       console.log("Password updated successfully");

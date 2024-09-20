@@ -54,6 +54,8 @@ export const profileStyles = {
   pictureContainer: "w-24 h-24 mb-4",
   picture:
     "object-cover w-full h-full border-4 border-blue-500 rounded-full shadow-lg",
+  pictureOverlay:
+    "absolute bottom-0 right-0 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer",
   username: "ml-6 text-4xl font-bold text-gray-100",
   sectionTitle: "mb-4 text-2xl font-semibold text-green-400",
   bioText: "text-lg text-gray-400",

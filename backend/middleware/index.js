@@ -4,6 +4,8 @@ require("dotenv").config();
 // MiddleWare Here we will need auth for now
 
 const authenticate = (req, res, next) => {
+  console.log(req, "========= auth header ==========");
+
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     console.log("Authorization header missing ");
