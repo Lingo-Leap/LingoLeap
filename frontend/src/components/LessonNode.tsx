@@ -1,4 +1,4 @@
-// components/Lessons.tsx
+
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLessons } from '../redux/actions/lessonAction';
@@ -23,7 +23,7 @@ const Lessons: React.FC = () => {
       {status === 'succeeded' && (
         <ul>
           {lessons.map((lesson : any) => (
-            // <li key={lesson.id}>{lesson.title}</li>
+         
             < Lesson lesson={lesson} />
           ))}
         </ul>

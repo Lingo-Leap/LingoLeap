@@ -1,4 +1,4 @@
-// redux/reducers/lessonReducer.ts
+
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchLessons } from '../actions/lessonAction';
 
