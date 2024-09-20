@@ -1,22 +1,24 @@
 import React from 'react';
-import { Language } from '../redux/types';
+import { Language } from '../redux/types'; // Adjust the path as necessary
 
 interface LanguageListProps {
-  languages: Language[];
+  languages: Language[]; // Expecting an array of Language objects
 }
 
 const LanguageList: React.FC<LanguageListProps> = ({ languages }) => {
   return (
-    <div>
-      <h1>Select a Language</h1>
-      <ul>
-        {languages.map((language) => (
-          <li key={language.id}>
-            <h2>{language.name}</h2>
-            {language.description && <p>{language.description}</p>} {/* Check if description exists */}
-            {language.languagePicture && <img src={language.languagePicture} alt={`${language.name} picture`} />} {/* Display image if exists */}
-          </li>
-        ))}
+    <div className="mt-4">
+      <h2 className="text-xl font-bold mb-2">Available Languages</h2>
+      <ul className="list-disc list-inside">
+        {languages.length > 0 ? (
+          languages.map((language) => (
+            <li key={language.id} className="text-gray-700">
+              {language.name}
+            </li>
+          ))
+        ) : (
+          <li className="text-gray-500">No languages available.</li>
+        )}
       </ul>
     </div>
   );
