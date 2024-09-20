@@ -19,12 +19,13 @@ const UserProfile = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
-    console.log('Dispatching fetchUserProfile');
+    console.log("Dispatching fetchUserProfile ");
     dispatch(fetchUserProfile() as any);
   }, [dispatch]);
 
   useEffect(() => {
     if (userProfile) {
+      console.log("Profile Picture URL:", userProfile.profilePicture);
       setUsername(userProfile.username);
       setEmail(userProfile.email);
     }
@@ -50,7 +51,7 @@ const UserProfile = () => {
     return <div>Loading...</div>;
   }
 
-  if (status === 'failed') {
+  if (status === "failed") {
     return <div>Error: {error}</div>;
   }
 
@@ -60,15 +61,15 @@ const UserProfile = () => {
 
   const profilePictureUrl = userProfile.profilePicture
     ? `http://localhost:1274/uploads/${userProfile.profilePicture}`
-    : 'default-profile.png';
-
+    : "default-profile.png";
+ 
   return (
     <div className="user-profile">
       <div className="profile-picture">
         <img src={profilePictureUrl} alt="Profile" />
       </div>
       <div className="profile-info">
-        <h2>{userProfile.username}</h2>
+        <h2>{userProfile.username }</h2>
         <form className="update-form" onSubmit={handleProfileSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username</label>

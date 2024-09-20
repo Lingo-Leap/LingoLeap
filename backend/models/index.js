@@ -43,12 +43,22 @@ Lesson.hasMany(Question, { foreignKey: "lessonId" });
 Question.hasMany(Choice, { foreignKey: "questionId" });
 Choice.belongsTo(Question, { foreignKey: "questionId" });
 
+User.hasMany(LessonsUsers, { foreignKey: "userId" });
+LessonsUsers.belongsTo(User, { foreignKey: "userId" });
+
+Lesson.hasMany(LessonsUsers, { foreignKey: "lessonId" });
+LessonsUsers.belongsTo(Lesson, { foreignKey: "lessonId" });
 // sequelize.drop().then(() => {
 //   console.log("All models were synchronized successfully.");
 // });
 
 // sequelize
+<<<<<<< HEAD
 //   .sync({ force: false })
+=======
+//   .sync({ force: false, alter: true })
+
+>>>>>>> 47deec91b3049b16c79ac9d422e0309ca554fa6e
 //   .then(() => {
 //     console.log("All models were synchronized successfully.");
 //   })
