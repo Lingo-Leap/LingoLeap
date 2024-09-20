@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchUserProfile, updateUserProfile,updateUserPassword } from '../actions/userActions';
+import { fetchUserProfile, updateUserProfile,updateUserPassword} from '../actions/userActions';
 
 export interface UserProfile {
   username: string;

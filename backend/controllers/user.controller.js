@@ -123,11 +123,11 @@ module.exports = {
     try {
       const userId = req.user.id;
       const { currentPassword, newPassword } = req.body;
-      console.log("Received password update request:", {
-        userId,
-        currentPassword,
-        newPassword,
-      });
+      // console.log("Received password update request:", {
+      //   userId,
+      //   currentPassword,
+      //   newPassword,
+      // });
       const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
