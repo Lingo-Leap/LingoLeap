@@ -7,8 +7,12 @@ export const fetchUserProfile = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as any;
       const token = state.auth.token;
+      if (!token) {
+        return thunkAPI.rejectWithValue('No token found');
+      }
       const response = await axios.get(`http://localhost:1274/api/user/me`, {
         headers: {
+
           Authorization: `Bearer ${token}`,
         },
       }); 
@@ -27,12 +31,18 @@ export const updateUserProfile = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as any;
       const token = state.auth.token;
+      if (!token) {
+        return thunkAPI.rejectWithValue('No token found');
+      }
       const response = await axios.put(`http://localhost:1274/api/user/update/profile`, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      thunkAPI.dispatch(fetchUserProfile());
       return response.data;
+
+
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -46,12 +56,16 @@ export const updateUserPassword = createAsyncThunk(
       
       const state = thunkAPI.getState() as any;
       const token = state.auth.token;
+      if (!token) {
+        return thunkAPI.rejectWithValue('No token found');
+      }
       // console.log("Sending password update request:", updatedData);
       const response = await axios.put(`http://localhost:1274/api/user/update-password/${updatedData.id}` , updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      thunkAPI.dispatch(fetchUserProfile());
       console.log("Password updated successfully:", response.data);
       return response.data;
     } catch (error: any) {

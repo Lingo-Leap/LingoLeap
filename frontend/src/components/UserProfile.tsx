@@ -20,7 +20,7 @@ const UserProfile: React.FC = () => {
   const { profile: userProfile, status, error } = useSelector((state: RootState) => state.user);
 
   // Fetch the userId from localStorage 
-  const userId = useMemo(() => localStorage.getItem("userId"), []);
+  // const userId = useMemo(() => localStorage.getItem("userId"), []);
 
 
   const [formState, setFormState] = useState({
