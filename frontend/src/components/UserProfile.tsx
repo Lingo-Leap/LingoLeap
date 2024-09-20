@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   buttonStyles,
@@ -14,37 +14,56 @@ import {
 } from "../redux/actions/userActions";
 import { RootState } from "../store/store";
 
-const UserProfile = () => {
+const UserProfile: React.FC = () => {
   const dispatch = useDispatch();
-  const userProfile = useSelector((state: RootState) => state.user.profile);
-  const status = useSelector((state: RootState) => state.user.status);
-  const error = useSelector((state: RootState) => state.user.error);
+  const {
+    profile: userProfile,
+    status,
+    error,
+  } = useSelector((state: RootState) => state.user);
 
-  // Fetch the userId from localStorage
-  const userId = localStorage.getItem("userId");
+  // Fetch the userId from localStorage (stored as constant to avoid recalculation)
+  const userId = useMemo(() => localStorage.getItem("userId"), []);
   console.log(userId, "=============userId================");
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formState, setFormState] = useState({
+    username: "",
+    email: "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const { username, email, currentPassword, newPassword, confirmPassword } =
+    formState;
 
   useEffect(() => {
-    dispatch(fetchUserProfile() as any);
-  }, [dispatch]);
+    if (!userProfile) {
+      dispatch(fetchUserProfile() as any);
+    }
+  }, [dispatch, userProfile]);
 
   useEffect(() => {
     if (userProfile) {
-      setUsername(userProfile.username);
-      setEmail(userProfile.email);
+      setFormState((prev) => ({
+        ...prev,
+        username: userProfile.username,
+        email: userProfile.email,
+      }));
     }
   }, [userProfile]);
 
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormState((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  }, []);
+
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedData = { username, email };
-    dispatch(updateUserProfile(updatedData as any) as any);
+    dispatch(updateUserProfile({ username, email } as any) as any);
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -53,8 +72,9 @@ const UserProfile = () => {
       alert("Passwords do not match");
       return;
     }
-    const updatedData = { currentPassword, newPassword };
-    dispatch(updateUserPassword(updatedData as any) as any);
+    dispatch(
+      updateUserPassword({ currentPassword, newPassword } as any) as any
+    );
   };
 
   const handleLogOut = () => {
@@ -98,7 +118,7 @@ const UserProfile = () => {
                 type="text"
                 id="username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={handleChange}
                 className={formStyles.input}
               />
             </div>
@@ -110,7 +130,7 @@ const UserProfile = () => {
                 type="email"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleChange}
                 className={formStyles.input}
               />
             </div>
@@ -128,7 +148,7 @@ const UserProfile = () => {
                 type="password"
                 id="currentPassword"
                 value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
+                onChange={handleChange}
                 className={formStyles.input}
                 autoComplete="current-password"
               />
@@ -141,7 +161,7 @@ const UserProfile = () => {
                 type="password"
                 id="newPassword"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={handleChange}
                 className={formStyles.input}
                 autoComplete="new-password"
               />
@@ -154,7 +174,7 @@ const UserProfile = () => {
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={handleChange}
                 className={formStyles.input}
                 autoComplete="new-password"
               />
@@ -163,7 +183,6 @@ const UserProfile = () => {
               Update Password
             </button>
 
-            {/* Mobile-Only Logout Button */}
             <button onClick={handleLogOut} className={buttonStyles.logout}>
               Logout
             </button>
