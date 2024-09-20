@@ -1,23 +1,34 @@
-// components/Lesson.tsx
 import React from 'react';
 
-// Définir le type des props attendues pour la leçon
+
 interface LessonProps {
   lesson: {
     id: number;
     title: string;
-    description: string;
+    content: string; 
+    createdAt: string;
+    updatedAt: string;
+    isCompleted: boolean;
+    languageId: number;
+    level: number;
+    type: string;
   };
 }
 
 const Lesson: React.FC<LessonProps> = ({ lesson }) => {
-    console.log(lesson)
+  console.log(lesson);
+  
+
   return (
+
     <div>
       <h2>{lesson.title}</h2>
-      <p>{lesson.description}</p>
+      <p>{lesson.content}</p> 
+      {/* <p>Level: {lesson.level}</p>
+      <p>Status: {lesson.isCompleted ? 'Completed' : 'Not Completed'}</p> */}
     </div>
   );
 };
 
 export default Lesson;
+
