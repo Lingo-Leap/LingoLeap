@@ -1,4 +1,13 @@
-import React, { useState } from 'react';
+import React, {useState} from "react";
+import { useNavigate } from "react-router-dom";
+
+
+ 
+
+
+
+
+
 
 const UsersTable: React.FC = () => {
   const users = [
@@ -147,6 +156,16 @@ const LanguagesTable: React.FC = () => {
 };
 
 const AdminDashboard: React.FC = () => {
+
+    const navigate = useNavigate();
+
+    // Example: Redirect to login if needed
+    const handleLogout = () => {
+      // Add your logout logic here
+      // Example: navigate to login after logout
+      navigate("/login");
+    }
+    
   const [activeSection, setActiveSection] = useState<string>('users');
 
   const renderContent = () => {
@@ -185,5 +204,6 @@ const AdminDashboard: React.FC = () => {
     </div>
   );
 };
+
 
 export default AdminDashboard;

@@ -1,34 +1,60 @@
 import React from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
-import { RootState, AppDispatch } from './store/store';
-import { fetchLanguages } from '../src/redux/actions/languageAction'; 
-import LanguageList from './components/LanguageList';
-import LogOutButton from './components/LogoutButton';
 import { Provider } from "react-redux";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { useAuth } from "./hooks/useAuth";
 import { store } from "./store/store";
-import Home from "./pages/Home";
-import UserProfile from "./components/UserProfile";
-import Navbar from "./components/Navbar";
-import HeroWelcome from "./pages/HeroWelcome";
-import AchievementsPage from "./pages/AchievementsPage";
-import Login from "./components/Login";
-import AdminDashboard from "./pages/AdminDashboard";
-import SignUp from "./components/SignUp";
-// import QuestionChoice from "./components/QuestionChoice";
-import "./App.css";
 
-function App() {
+import "./App.css";
+import Login from "./components/Login";
+
+import Navbar from "./components/Navbar";
+import QuestionChoice from "./components/QuestionChoice";
+import SignUp from "./components/SignUp";
+import UserProfile from "./components/UserProfile";
+import AchievementsPage from "./pages/AchievementsPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import HeroWelcome from "./pages/HeroWelcome";
+import Home from "./pages/Home";
+
+// Centralized route paths
+const ROUTES = {
+  HOME: "/home",
+  LOGIN: "/login",
+  REGISTER: "/register",
+  DASHBOARD: "/admin-dashboard",
+  PROFILE: "/profile",
+  ACHIEVEMENTS: "/achievements",
+  LESSON: "/lesson",
+};
+
+const App: React.FC = () => {
+  const { isAuthenticated, logoutUser, isAdmin } = useAuth(); // Auth context
+
+  console.log(isAdmin, "Admin check");
+
+
+  // NavbarWrapper component for routes with the navigation bar
   const NavbarWrapper: React.FC = () => {
     return (
       <>
-        {/* Navbar Component */}
-        <Navbar />
-        {/* Outlet for rendering child routes */}
+        <Navbar isAuthenticated={isAuthenticated} logout={logoutUser} />
         <div className="pb-24 mt-28 md:pb-12 md:mt-12">
-          {/* Padding for mobile views and top margin to ensure space for mobile */}
           <Outlet />
         </div>
       </>
+    );
+  };
+
+  // Protected route handling based on authentication and admin role
+  const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+    return isAuthenticated ? children : <Navigate to={ROUTES.LOGIN} />;
+  };
+
+  const AdminRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+    return isAuthenticated && isAdmin ? (
+      children
+    ) : (
+      <Navigate to={ROUTES.LOGIN} />
     );
   };
 
@@ -36,19 +62,65 @@ function App() {
     <Provider store={store}>
       <div className="App">
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<HeroWelcome />} />
+          <Route
+            path={ROUTES.LOGIN}
+            element={
+              !isAuthenticated ? <Login /> : <Navigate to={ROUTES.HOME} />
+            }
+          />
+          <Route
+            path={ROUTES.REGISTER}
+            element={
+              !isAuthenticated ? <SignUp /> : <Navigate to={ROUTES.HOME} />
+            }
+          />
 
-          {/* NavbarWrapper for routes with the Navbar */}
+          {/* Protected Routes with Navbar */}
           <Route element={<NavbarWrapper />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/achievements" element={<AchievementsPage />} />
-            <Route path="/profile" element={<UserProfile />} />
+            <Route
+              path={ROUTES.HOME}
+              element={
+                <PrivateRoute>
+                  {isAdmin ? <Navigate to={ROUTES.DASHBOARD} /> : <Home />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={ROUTES.DASHBOARD}
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ACHIEVEMENTS}
+              element={
+                <PrivateRoute>
+                  <AchievementsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={ROUTES.PROFILE}
+              element={
+                <PrivateRoute>
+                  <UserProfile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={ROUTES.LESSON}
+              element={
+                <PrivateRoute>
+                  <QuestionChoice />
+                </PrivateRoute>
+              }
+            />
           </Route>
 
-          <Route path="/register" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path ="/admin" element={<AdminDashboard/>}/>
-          {/* <Route path="/lesson" element={<QuestionChoice />} /> */}
 
         </Routes>
       </div>
