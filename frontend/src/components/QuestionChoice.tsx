@@ -1,5 +1,5 @@
-
-import React from 'react';
+import React from "react";
+import Questions from "./Questions";
 
 interface Choice {
   id: number;
@@ -21,4 +21,5 @@ const QuestionChoice: React.FC<QuestionChoiceProps> = ({ choice }) => {
 };
 
 export default QuestionChoice;
+
 

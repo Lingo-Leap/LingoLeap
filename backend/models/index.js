@@ -43,6 +43,11 @@ Lesson.hasMany(Question, { foreignKey: "lessonId" });
 Question.hasMany(Choice, { foreignKey: "questionId" });
 Choice.belongsTo(Question, { foreignKey: "questionId" });
 
+User.hasMany(LessonsUsers, { foreignKey: "userId" });
+LessonsUsers.belongsTo(User, { foreignKey: "userId" });
+
+Lesson.hasMany(LessonsUsers, { foreignKey: "lessonId" });
+LessonsUsers.belongsTo(Lesson, { foreignKey: "lessonId" });
 // sequelize.drop().then(() => {
 //   console.log("All models were synchronized successfully.");
 // });

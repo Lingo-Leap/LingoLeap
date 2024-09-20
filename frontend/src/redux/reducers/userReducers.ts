@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchUserProfile, updateUserProfile } from '../actions/userActions';
+import { fetchUserProfile, updateUserProfile,updateUserPassword } from '../actions/userActions';
 
 export interface UserProfile {
   username: string;
   email: string;
   profilePicture: string;
   totalPoints: number;
+  passwordHash: string;
+  
 }
 
 
@@ -13,14 +15,15 @@ interface UserState {
   profile: UserProfile | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  passwordHash: string | null;
 
 }
 
 const initialState: UserState = {
   profile: null,
   status: 'idle',
-  error: null
-
+  error: null,
+  passwordHash: null,
 };
 
 const userSlice = createSlice({
@@ -50,8 +53,19 @@ const userSlice = createSlice({
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to update user profile';
+      })
+      .addCase(updateUserPassword.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateUserPassword.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.passwordHash = action.payload;
+      })
+      .addCase(updateUserPassword.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to update user password';
       });
-  }
+  },
 });
 
 export default userSlice.reducer;
