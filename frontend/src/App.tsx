@@ -13,7 +13,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import LanguageList from './components/LanguageList';
 import LogOutButton from './components/LogoutButton';
-import QuestionChoice from './components/QuestionChoice';
+import QuestionChoice from './pages/QuestionChoice';
 import { store } from './store/store';
 import './App.css';
 
