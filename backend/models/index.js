@@ -47,14 +47,14 @@ Choice.belongsTo(Question, { foreignKey: "questionId" });
 //   console.log("All models were synchronized successfully.");
 // });
 
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log("All models were synchronized successfully.");
-  })
-  .catch((error) => {
-    console.error("Error synchronizing models:", error);
-  });
+// sequelize
+//   .sync({ force: false })
+//   .then(() => {
+//     console.log("All models were synchronized successfully.");
+//   })
+//   .catch((error) => {
+//     console.error("Error synchronizing models:", error);
+//   });
 
 // const userFaker = require("./faker/users").up(User, sequelize);
 // const languageFaker = require("./faker/language").up(Language, sequelize);

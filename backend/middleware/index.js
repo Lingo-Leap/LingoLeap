@@ -6,6 +6,7 @@ require("dotenv").config();
 const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log("Authorization header missing ");
     return res.status(401).json({ message: "Unauthorized" });
   }
 

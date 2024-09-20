@@ -104,23 +104,54 @@ module.exports = {
     try {
       // const { id } = req.params;
       const userId = req.user.id;
-      const { username, email, passwordHash } = req.body;
+      const { username, email } = req.body;
 
       const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      const updatedData = { username, email };
 
-      if (passwordHash) {
-        const hashedPassword = await bcrypt.hash(passwordHash, saltRounds);
-        updatedData.passwordHash = hashedPassword;
-      }
       await user.update({ username, email });
 
       res.status(200).json({ message: "Profile updated successfully" });
     } catch (error) {
       console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+  updateUserPassword: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { currentPassword, newPassword } = req.body;
+      console.log("Received password update request:", {
+        userId,
+        currentPassword,
+        newPassword,
+      });
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const passwordMatch = await bcrypt.compare(
+        currentPassword,
+        user.passwordHash
+      );
+
+      if (!passwordMatch) {
+        console.log("Current password is incorrect");
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      await user.update({ passwordHash: hashedPassword });
+
+      console.log("Password updated successfully");
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("Error updating password:", error);
       res.status(500).json({ message: error.message });
     }
   },
