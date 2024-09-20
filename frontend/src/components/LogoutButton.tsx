@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 const LogOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <button
-      className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+      className="px-5 py-2 font-semibold text-white transition duration-300 transform bg-red-500 rounded-full shadow-md hover:bg-red-600 hover:scale-105"
       onClick={onClick}
     >
       Log Out

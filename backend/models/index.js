@@ -43,18 +43,23 @@ Lesson.hasMany(Question, { foreignKey: "lessonId" });
 Question.hasMany(Choice, { foreignKey: "questionId" });
 Choice.belongsTo(Question, { foreignKey: "questionId" });
 
+User.hasMany(LessonsUsers, { foreignKey: "userId" });
+LessonsUsers.belongsTo(User, { foreignKey: "userId" });
+
+Lesson.hasMany(LessonsUsers, { foreignKey: "lessonId" });
+LessonsUsers.belongsTo(Lesson, { foreignKey: "lessonId" });
 // sequelize.drop().then(() => {
 //   console.log("All models were synchronized successfully.");
 // });
 
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log("All models were synchronized successfully.");
-  })
-  .catch((error) => {
-    console.error("Error synchronizing models:", error);
-  });
+// sequelize
+//   .sync({ force: false })
+//   .then(() => {
+//     console.log("All models were synchronized successfully.");
+//   })
+//   .catch((error) => {
+//     console.error("Error synchronizing models:", error);
+//   });
 
 // const userFaker = require("./faker/users").up(User, sequelize);
 // const languageFaker = require("./faker/language").up(Language, sequelize);

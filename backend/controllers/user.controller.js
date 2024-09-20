@@ -100,17 +100,58 @@ module.exports = {
     }
   },
 
-  updateUser: async (req, res) => {
+  updateUserProfile: async (req, res) => {
     try {
-      const { id } = req.params;
-      const { username, email, passwordHash, role } = req.body;
-      const user = await User.findByPk(id);
+      // const { id } = req.params;
+      const userId = req.user.id;
+      const { username, email } = req.body;
+
+      const user = await User.findByPk(userId);
       if (!user) {
-        return res.status(400).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" });
       }
-      await user.update({ username, email, passwordHash, role });
-      res.status(200).json({ message: "User updated successfully" });
+
+      await user.update({ username, email });
+
+      res.status(200).json({ message: "Profile updated successfully" });
     } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+  updateUserPassword: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { currentPassword, newPassword } = req.body;
+      console.log("Received password update request:", {
+        userId,
+        currentPassword,
+        newPassword,
+      });
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const passwordMatch = await bcrypt.compare(
+        currentPassword,
+        user.passwordHash
+      );
+
+      if (!passwordMatch) {
+        console.log("Current password is incorrect");
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      await user.update({ passwordHash: hashedPassword });
+
+      console.log("Password updated successfully");
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("Error updating password:", error);
       res.status(500).json({ message: error.message });
     }
   },
@@ -166,6 +207,7 @@ module.exports = {
   getCurrentUser: async (req, res) => {
     try {
       const userId = req.user.id;
+      console.log("User ID from token:", userId);
       if (!userId) {
         return res.status(400).json({ message: "User ID not found in token" });
       }
@@ -189,6 +231,26 @@ module.exports = {
       res
         .status(500)
         .json({ message: "An error occurred while fetching the current user" });
+    }
+  },
+  getUserPointsById: async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const user = await User.findByPk(id, {
+        attributes: ["totalPoints"],
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json({ totalPoints: user.totalPoints });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: "An error occurred while fetching the user points",
+      });
     }
   },
 };
