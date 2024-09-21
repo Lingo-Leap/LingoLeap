@@ -38,6 +38,7 @@ const userSlice = createSlice({
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.profile = action.payload;
+        state.error = null;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.status = 'failed';
@@ -60,6 +61,7 @@ const userSlice = createSlice({
       .addCase(updateUserPassword.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.passwordHash = action.payload;
+        state.error = null; 
       })
       .addCase(updateUserPassword.rejected, (state, action) => {
         state.status = 'failed';
