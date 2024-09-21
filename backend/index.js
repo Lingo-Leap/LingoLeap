@@ -5,6 +5,8 @@ require("./config/config");
 const path = require("path");
 require("./models");
 
+const adminUserRouter = require("./admin/adminRouters/admin.user.router");
+
 const userRouter = require("./routers/user.router");
 const languageRouter = require("./routers/language.router");
 const lessonsRouter = require("./routers/lesson.router");
@@ -18,6 +20,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Admin Routes
+app.use("/api/admin/user", adminUserRouter);
 
 app.use("/api/user", userRouter);
 app.use("/api/language", languageRouter);

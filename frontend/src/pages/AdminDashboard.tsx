@@ -1,34 +1,62 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-
-
- 
-
-
-
+import axios from "axios";
+ import "../AdminUser.css";
 
 
 
 const UsersTable: React.FC = () => {
-  const users = [
-    {
-      id: 1,
-      username: 'john_doe',
-      email: 'john@example.com',
-      role: 'Admin',
-      totalPoints: 1200,
-      createdAt: '2023-01-15',
-    },
-    {
-      id: 2,
-      username: 'jane_smith',
-      email: 'jane@example.com',
-      role: 'User',
-      totalPoints: 800,
-      createdAt: '2023-02-20',
-    },
-  ];
+  const [users, setUsers] = useState<any[]>([]); // State to hold users
+  const [loading, setLoading] = useState<boolean>(true); // State to handle loading
+  const [editingUser, setEditingUser] = useState<any>(null); // State to hold the user being edited
+  useEffect(() => {
+    // Fetch users from the backend
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:1274/api/admin/user/all"); // Adjust the URL as needed
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchUsers();
+  }, []);
+const handleDelete = async (id: number) => {
+  try {
+    await axios.delete(`http://localhost:1274/api/admin/user/delete/${id}`);
+    setUsers(users.filter((user) => user.id !== id)); // Remove the deleted user from the state
+  } catch (error) {
+    console.error("Error deleting user:", error);
+  }
+};
+const handleEdit = (user: any) => {
+  setEditingUser(user);
+};
+
+const handleUpdate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const response = await axios.put(`http://localhost:1274/api/admin/user/update/${editingUser.id}`, editingUser);
+    setUsers(users.map((user) => (user.id === editingUser.id ? response.data : user)));
+    setEditingUser(null);
+    setUsers(response.data);
+  } catch (error) {
+    console.error("Error updating user:", error);
+
+
+  }
+};
+
+
+  if (loading) {
+
+
+    return <div>Loading...</div>; // Show a loading indicator while fetching data
+  }
+  
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-300">
@@ -53,15 +81,62 @@ const UsersTable: React.FC = () => {
               <td className="py-2 px-4 border-b">{user.totalPoints}</td>
               <td className="py-2 px-4 border-b">{user.createdAt}</td>
               <td className="py-2 px-4 border-b">
-                <button className="text-blue-500">Edit</button>
-                <button className="text-red-500 ml-2">Delete</button>
+                <button className="text-blue-500" onClick={() => handleEdit(user)}>Edit</button>
+                <button className="text-red-500 ml-2" onClick={() => handleDelete(user.id)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {editingUser && (
+        <>
+        <div className="modal-overlay" onClick={() => setEditingUser(null)}></div>
+        <div className="modal">
+        <form onSubmit={handleUpdate} className="mt-4">
+          <h2>Edit User</h2>
+
+          <div>
+            <label>Username:</label>
+            <input
+              type="text"
+              value={editingUser.username}
+              onChange={(e) => setEditingUser({ ...editingUser, username: e.target.value })}
+            />
+          </div>
+          <div>
+            <label>Email:</label>
+            <input
+              type="email"
+              value={editingUser.email}
+              onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+            />
+          </div>
+          <div>
+            <label>Role:</label>
+            <input
+              type="text"
+              value={editingUser.role}
+              onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+            />
+          </div>
+          <div>
+            <label>Total Points:</label>
+            <input
+              type="number"
+              value={editingUser.totalPoints}
+              onChange={(e) => setEditingUser({ ...editingUser, totalPoints: e.target.value })}
+            />
+          </div>
+          <button type="submit" className="text-blue-500">Update</button>
+          <button type="button" className="text-red-500 ml-2" onClick={() => setEditingUser(null)}>Cancel</button>
+        </form>
+        </div>
+        
+      </>
+      )}
     </div>
   );
+
 };
 
 const LanguagesTable: React.FC = () => {
