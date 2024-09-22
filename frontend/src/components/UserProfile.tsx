@@ -17,10 +17,16 @@ import { RootState } from "../store/store";
 
 const UserProfile: React.FC = () => {
   const dispatch = useDispatch();
-  const { profile: userProfile, status, error } = useSelector((state: RootState) => state.user);
 
-  // Fetch the userId from localStorage 
+  const {
+    profile: userProfile,
+    status,
+    error,
+  } = useSelector((state: RootState) => state.user);
+
+  // Fetch the userId from localStorage (stored as constant to avoid recalculation)
   const userId = useMemo(() => localStorage.getItem("userId"), []);
+  console.log(userId, "=============userId================");
 
 
   const [formState, setFormState] = useState({
@@ -31,7 +37,10 @@ const UserProfile: React.FC = () => {
     confirmPassword: "",
   });
 
-  const { username, email, currentPassword, newPassword, confirmPassword } = formState;
+
+  const { username, email, currentPassword, newPassword, confirmPassword } =
+    formState;
+
 
   useEffect(() => {
     if (!userProfile) {
@@ -48,17 +57,14 @@ const UserProfile: React.FC = () => {
       }));
     }
   }, [userProfile]);
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormState((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  }, []);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { id, value } = e.target;
-      setFormState((prev) => ({
-        ...prev,
-        [id]: value,
-      }));
-    },
-    []
-  );
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +77,11 @@ const UserProfile: React.FC = () => {
       alert("Passwords do not match");
       return;
     }
-    dispatch(updateUserPassword({ currentPassword, newPassword } as any) as any);
+
+    dispatch(
+      updateUserPassword({ currentPassword, newPassword } as any) as any
+    );
+
   };
 
   const handleLogOut = () => {

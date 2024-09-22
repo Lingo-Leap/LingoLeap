@@ -11,6 +11,7 @@ export interface UserProfile {
 }
 
 
+
 interface UserState {
   profile: UserProfile | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -19,12 +20,16 @@ interface UserState {
 
 }
 
+
+
 const initialState: UserState = {
   profile: null,
   status: 'idle',
   error: null,
   passwordHash: null,
 };
+
+
 
 const userSlice = createSlice({
   name: 'user',
@@ -38,6 +43,7 @@ const userSlice = createSlice({
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.profile = action.payload;
+        state.error = null;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.status = 'failed';
@@ -60,6 +66,7 @@ const userSlice = createSlice({
       .addCase(updateUserPassword.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.passwordHash = action.payload;
+        state.error = null; 
       })
       .addCase(updateUserPassword.rejected, (state, action) => {
         state.status = 'failed';
@@ -68,4 +75,5 @@ const userSlice = createSlice({
   },
 });
 
+  
 export default userSlice.reducer;

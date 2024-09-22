@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa"; // Hamburger and Close icons
-import { Link, useLocation } from "react-router-dom"; // Add useLocation to track the active route
+import { FaBars, FaTimes } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
 import { ReactComponent as TrophyIcon } from "../assets/achivement.svg";
 import { ReactComponent as Icon } from "../assets/icon.svg";
 import { ReactComponent as HomeIcon } from "../assets/learn.svg";
 import { ReactComponent as ProfileIcon } from "../assets/profile.svg";
 
-const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false); // State to manage sidebar visibility
-  const [isScrollingUp, setIsScrollingUp] = useState(true); // State to track scroll direction
-  const [lastScrollY, setLastScrollY] = useState(0); // Track last scroll position
-  const location = useLocation(); // Get the current route location
+interface NavbarProps {
+  isAuthenticated: boolean;
+  logout: () => void; // Add logout function to props
+}
 
-  const handleLogOut = () => {
-    console.log("User logged out");
-  };
+const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, logout }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrollingUp, setIsScrollingUp] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const location = useLocation();
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen); // Toggle sidebar visibility
+    setIsOpen(!isOpen);
   };
 
-  // Hide/show the logo bar based on scroll direction
+  // Handle user logout
+  const handleLogOut = () => {
+    logout(); // Call logout from props
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > lastScrollY && window.scrollY > 50) {
@@ -32,13 +37,10 @@ const Navbar: React.FC = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  const isActive = (path: string) => location.pathname === path; // Determine if the current route is active
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <div>
@@ -59,7 +61,6 @@ const Navbar: React.FC = () => {
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <div className="fixed z-50 flex items-center top-4 left-4">
-          {/* Bouton pour ouvrir/fermer le sidebar */}
           <button
             className="flex items-center p-2 text-white bg-gray-800 rounded-md focus:outline-none focus:ring"
             onClick={toggleSidebar}
@@ -70,8 +71,6 @@ const Navbar: React.FC = () => {
               <FaBars className="w-6 h-6" />
             )}
           </button>
-
-          {/* Affichage/masquage du logo basé sur isOpen */}
           {!isOpen && (
             <div className="flex items-center ml-4 transition-opacity duration-300 ease-in-out opacity-100">
               <Icon className="w-10 h-10 mr-2" />
@@ -85,7 +84,7 @@ const Navbar: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={` fixed top-0 left-0 z-40 flex flex-col h-screen p-6 shadow-xl bg-gradient-to-b from-gray-900 to-gray-800 transform transition-transform duration-300 ${
+        className={`fixed top-0 left-0 z-40 flex flex-col h-screen p-6 shadow-xl bg-gradient-to-b from-gray-900 to-gray-800 transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:w-1/5`}
       >
@@ -145,14 +144,14 @@ const Navbar: React.FC = () => {
         </ul>
 
         <div className="mt-auto">
-          <Link to="/">
+          {isAuthenticated && (
             <button
               className="w-full py-3 text-xl font-bold text-white transition-transform duration-300 bg-red-500 rounded-lg shadow-lg hover:bg-red-600 hover:scale-105"
               onClick={handleLogOut}
             >
               LOGOUT
             </button>
-          </Link>
+          )}
         </div>
       </div>
 
