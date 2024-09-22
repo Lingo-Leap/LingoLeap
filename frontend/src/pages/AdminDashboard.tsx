@@ -63,8 +63,8 @@ const filteredUsers = users.filter((user) =>
   
   return (
     <div className="overflow-x-auto">
-      <h1>Users</h1>
-      <input type="text" placeholder="Search by username" onChange={(e) => setSearchUsername(e.target.value)} />
+      <h1 className="users-heading">Users</h1>
+      <input type="text" placeholder="Search by username" onChange={(e) => setSearchUsername(e.target.value)} className="search-input" />
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
           <tr>
