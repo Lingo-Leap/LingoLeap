@@ -10,7 +10,7 @@ module.exports = {
         email: faker.internet.email(),
         passwordHash: await bcrypt.hash("1234", 10),
         profilePicture: faker.image.avatar(),
-        totalPoints: faker.number.int({ min: 0, max: 1000 }),
+        totalPoints: faker.number.int({ min: 0, max: 7255293939268300 }),
         createdAt: new Date(),
         updatedAt: new Date(),
         role: faker.helpers.arrayElement(["user", "admin", "teacher"]),
