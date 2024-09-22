@@ -9,6 +9,7 @@ const UsersTable: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]); // State to hold users
   const [loading, setLoading] = useState<boolean>(true); // State to handle loading
   const [editingUser, setEditingUser] = useState<any>(null); // State to hold the user being edited
+  const [searchUsername, setSearchUsername] = useState<string>(""); // State to hold the search username
   useEffect(() => {
     // Fetch users from the backend
     const fetchUsers = async () => {
@@ -42,7 +43,7 @@ const handleUpdate = async (e: React.FormEvent) => {
     const response = await axios.put(`http://localhost:1274/api/admin/user/update/${editingUser.id}`, editingUser);
     setUsers(users.map((user) => (user.id === editingUser.id ? response.data : user)));
     setEditingUser(null);
-    setUsers(response.data);
+    // setUsers(response.data);
   } catch (error) {
     console.error("Error updating user:", error);
 
@@ -50,6 +51,9 @@ const handleUpdate = async (e: React.FormEvent) => {
   }
 };
 
+const filteredUsers = users.filter((user) =>
+  user.username.toLowerCase().includes(searchUsername.toLowerCase())
+);
 
   if (loading) {
 
@@ -59,6 +63,8 @@ const handleUpdate = async (e: React.FormEvent) => {
   
   return (
     <div className="overflow-x-auto">
+      <h1>Users</h1>
+      <input type="text" placeholder="Search by username" onChange={(e) => setSearchUsername(e.target.value)} />
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
           <tr>
@@ -72,7 +78,7 @@ const handleUpdate = async (e: React.FormEvent) => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <tr key={user.id}>
               <td className="py-2 px-4 border-b">{user.id}</td>
               <td className="py-2 px-4 border-b">{user.username}</td>
