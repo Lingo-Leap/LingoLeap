@@ -62,7 +62,7 @@ const Achievements: React.FC = () => {
 
         // Fetch lesson data
         const lessonUrl = `http://localhost:1274/api/lessonsUsers/user/${decoded.id}/lessons/count`;
-        const pointsUrl = `http://localhost:1274/api/user/points/${decoded.id}`;
+        const pointsUrl = `http://localhost:1274/api/lessonsUsers/user/${decoded.id}/points`;
 
         // Fetch lesson data
         axios
@@ -75,7 +75,14 @@ const Achievements: React.FC = () => {
         // Fetch user points data
         axios
           .get(pointsUrl)
-          .then((response) => setPoints(response.data.totalPoints))
+          .then((response) => {
+            console.log(response.data)
+            if(response.data.totalPoints === null){
+              setPoints(0)
+            }else{
+            setPoints(response.data.totalPoints)
+            }
+          })
           .catch((error) => console.error("Error fetching points data:", error))
           .finally(() => setLoading(false));
       } catch (err) {

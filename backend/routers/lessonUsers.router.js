@@ -9,6 +9,7 @@ lessonsUsersRouter.get("/:id", lessonsUsersController.getById);
 lessonsUsersRouter.put("/:id", lessonsUsersController.update);
 lessonsUsersRouter.delete("/:id", lessonsUsersController.delete);
 
+
 lessonsUsersRouter.get(
   "/user/:userId/lessons",
   lessonsUsersController.getLessonsByUserId
@@ -17,6 +18,11 @@ lessonsUsersRouter.get(
 lessonsUsersRouter.get(
   "/user/:userId/lessons/count",
   lessonsUsersController.getActiveAndCompletedLessonsCount
+);
+
+lessonsUsersRouter.get(
+  "/user/:userId/points",
+  lessonsUsersController.countPointsByUserId
 );
 
 module.exports = lessonsUsersRouter;
