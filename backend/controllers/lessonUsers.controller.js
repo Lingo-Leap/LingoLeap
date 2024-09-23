@@ -112,6 +112,7 @@ module.exports = {
   },
 
   // Récupérer le nombre de leçons actives et terminées pour un utilisateur
+  
   getActiveAndCompletedLessonsCount: async (req, res) => {
     try {
       const userId = req.params.userId;
