@@ -134,7 +134,26 @@ module.exports = {
 
   // Check if all stages are completed
   
+  async checkAllStagesCompleted(req, res) {
+    const { userId, languageId } = req.params;
 
+    try {
+      const lessonsProgress = await LessonsUsers.findAll({
+        where: { userId, languageId, isCompleted: true },
+      });
+
+      // Assuming you have a method to get all lessons for a language
+      const totalLessons = await Lesson.count({ where: { languageId } });
+
+      if (lessonsProgress.length === totalLessons) {
+        return res.status(200).json({ message: "All stages completed!" });
+      }
+
+      res.status(200).json({ message: "Some stages are still incomplete." });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
 
 
 };
