@@ -11,9 +11,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import { store } from "./redux/store/store";
 
-// Global styles
-import "./App.css";
-
 // Component Imports
 import GameBar from "./components/games/GameBar";
 import Navbar from "./components/layout/Navbar";
