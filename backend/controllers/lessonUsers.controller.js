@@ -192,4 +192,15 @@ module.exports = {
       res.status(500).json({ error: error.message });
     }
   },
+  async countPointsByUserId  (req, res)  {
+    const {userId} = req.params 
+    try {
+      const totalPoints = await LessonsUsers.sum("progress",{where: {userId},});
+  
+  
+      res.status(200).json({ totalPoints });
+    } catch (error) {
+      res.status(500).json({ message: 'Erreur lors du calcul des points', error });
+    }
+  }
 };
