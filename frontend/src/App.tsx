@@ -13,9 +13,6 @@ import { store } from "./redux/store/store";
 import useTimer from "./hooks/useTimer";
 
 
-// Global styles
-import "./App.css";
-
 // Component Imports
 import GameBar from "./components/games/GameBar";
 import Navbar from "./components/layout/Navbar";

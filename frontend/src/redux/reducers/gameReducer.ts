@@ -40,8 +40,8 @@ interface GameState {
 const initialState: GameState = {
   lives: 5,
   maxLives: 5,
-  energy: 6,
-  maxEnergy: 10,
+  energy: 0,
+  maxEnergy: 100,
   coins: 1000,
   extraLives: {
     current: 5,
@@ -82,10 +82,8 @@ const gameReducer = createReducer(initialState, (builder) => {
         state.energy -= 1;
       }
     })
-    .addCase(incrementEnergy, (state) => {
-      if (state.energy < state.maxEnergy) {
-        state.energy += 1;
-      }
+    .addCase(incrementEnergy, (state,action: PayloadAction<number>) => {
+        state.energy = Math.min(state.energy + action.payload, state.maxEnergy);
     })
 
     // Coins reducers
@@ -109,7 +107,9 @@ const gameReducer = createReducer(initialState, (builder) => {
     .addCase(resetExtraLives, (state) => {
       state.extraLives.current = state.extraLives.max;
       state.extraLives.timer = "00:00";
-    });
+    })
+
+
 });
 
 // ==============================

@@ -1,10 +1,13 @@
 import axios from "axios"; // For making POST requests
 import { useDispatch, useSelector } from "react-redux"; 
 import { decrementLives, setExtraLives } from "../../redux/actions/gameActions";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
-import { useParams } from "react-router-dom"; // To get the language and stage
-import { useDecodeToken } from "../../hooks/useDecode"; // Custom hook to decode JWT token
+import { useParams, useNavigate } from "react-router-dom";
+import { useDecodeToken } from "../../hooks/useDecode";
+import { useDispatch } from "react-redux";
+import { incrementEnergy } from "../../redux/actions/gameActions";
 import {
   buttonStyles,
   containerStyles,
@@ -20,60 +23,53 @@ interface QuizProps {
 }
 
 const QuizExample: React.FC<QuizProps> = ({ questions }) => {
-  const dispatch = useDispatch();
-  const { language, stageId } = useParams(); // Get the language and stage from the URL
+  const { languageId, stageId } = useParams();
+  const navigate = useNavigate(); // Use navigate to go to the next stage
   const decodedToken = useDecodeToken();
-  const userId = decodedToken ? decodedToken.id : null; // Get the user ID from the token
-  const [selectedWord, setSelectedWord] = useState<string | null>(null); // Single selected word
-  const [availableWords, setAvailableWords] = useState([...questions.options]); // Available words
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Answer status
-  const [timeLeft, setTimeLeft] = useState(15); // Remaining time (in seconds)
-  const [isTimeUp, setIsTimeUp] = useState(false); // Status to check if time is up
-  const [incorrectCount, setIncorrectCount] = useState(0); // Incorrect answers counter
-  const [showPopup, setShowPopup] = useState<string | null>(null); // Popup for win or lose
-  const [hasLivesDecremented, setHasLivesDecremented] = useState(false); // Track if lives have been decremented
+  const userId = decodedToken ? decodedToken.id : null;
+  const [selectedWord, setSelectedWord] = useState<string | null>(null); // Un seul mot sélectionné
+  const [availableWords, setAvailableWords] = useState([...questions.options]); // Les mots disponibles
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Statut de la réponse
+  const [timeLeft, setTimeLeft] = useState(15); // Temps restant (en secondes)
+  const [isTimeUp, setIsTimeUp] = useState(false); // Statut pour vérifier si le temps est écoulé
+  const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
+  const [showPopup, setShowPopup] = useState<string | null>(null); // Popup pour victoire ou défaite
 
-  // Use useEffect to set up the timer
+  const dispatch = useDispatch();
+  // Utiliser useEffect pour mettre en place le timer
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1000);
-
-      return () => clearInterval(timer); // Clean up the interval on component unmount or if timer changes
-    } else if (timeLeft === 0 && !hasLivesDecremented) {
-      setIsTimeUp(true); // Time's up
-      dispatch(decrementLives()); // Decrement lives
-      setHasLivesDecremented(true); // Mark that we've decremented lives
+      return () => clearInterval(timer);
+    } else if (timeLeft === 0) {
+      setIsTimeUp(true);
       setShowPopup("lost");
-      console.log("Temps écoulé, vous avez perdu !");
     }
-  }, [timeLeft, showPopup, hasLivesDecremented, dispatch]);
+
+    // console.log("--------",useParams())
+  }, [timeLeft, showPopup]);
 
   const handleWordClick = (word: string) => {
-    if (selectedWord === word) {
-      return; // If the same word is clicked, do nothing
-    } else if (selectedWord) {
-      const updatedWords = availableWords.map((w) =>
-        w === word ? selectedWord : w
-      );
-      setSelectedWord(word);
-      setAvailableWords(updatedWords);
-    } else {
-      setSelectedWord(word);
+    if (selectedWord === word) return;
+    setSelectedWord(word);
+    if (!selectedWord) {
       setAvailableWords(availableWords.filter((w) => w !== word));
+    } else {
+      setAvailableWords(availableWords.map((w) => (w === word ? selectedWord : w)));
+      setSelectedWord(word);
     }
   };
 
   const handleReset = () => {
     setSelectedWord(null);
-    setAvailableWords([...questions.options]); // Reset options
+    setAvailableWords([...questions.options]);
     setIsCorrect(null);
-    setTimeLeft(15); // Reset time
-    setIsTimeUp(false); // Reset timer state
-    setIncorrectCount(0); // Reset incorrect answers
-    setShowPopup(null); // Close popup
-    setHasLivesDecremented(false); // Reset lives decrement tracking
+    setTimeLeft(15);
+    setIsTimeUp(false);
+    setIncorrectCount(0);
+    setShowPopup(null);
   };
 
   const handleValidate = async () => {
@@ -81,8 +77,8 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
       setIsCorrect(true);
       setShowPopup("won");
       console.log("Bonne réponse, vous avez gagné !");
-
-      // Check data before sending
+      dispatch(incrementEnergy(10));
+      // Vérifier les données avant l'envoi
       console.log("Données envoyées :", {
         userId,
         lessonId: Number(stageId),
@@ -111,54 +107,43 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
     } else {
       setIsCorrect(false);
       setIncorrectCount(incorrectCount + 1);
-      dispatch(decrementLives());
-      console.log("Réponse incorrecte");
     }
   };
 
-  // Calculate the width of the progress bar based on the remaining time
-  const progressBarWidth = (timeLeft / 15) * 100; // 15 seconds total
+  const progressBarWidth = (timeLeft / 15) * 100;
+
+  const handleNextStage = () => {
+    const nextStageId = Number(stageId) + 1; // Increment the stage ID
+    navigate(`/language/${languageId}/stages/${nextStageId}/play`); // Navigate to the next stage
+  };
 
   return (
     <div className="flex flex-col items-center justify-center text-white">
-      {/* Progress Bar */}
       <div className="w-full max-w-xl bg-gray-700 rounded-full h-2.5 my-4">
-        <div
-          className="bg-green-500 h-2.5 rounded-full"
-          style={{ width: `${progressBarWidth}%` }}
-        />
+        <div className="bg-green-500 h-2.5 rounded-full" style={{ width: `${progressBarWidth}%` }} />
       </div>
 
-      {/* Remaining Time */}
-      <div className="mb-4 text-lg">{timeLeft} seconds left</div>
+      <div className="mb-4 text-lg">{timeLeft} secondes restantes</div>
 
-      {/* Question Section */}
       <div className={`${containerStyles.card} flex flex-col items-center`}>
         <div className="flex items-center mb-4">
-          <h2 className={`${typographyStyles.heading2} mr-4`}>
-            {questions.question}
-          </h2>
+          <h2 className={`${typographyStyles.heading2} mr-4`}>{questions.question}</h2>
           <button className="p-2 rounded-full text-duolingoBlue">
             <FiVolume2 className="text-2xl" />
           </button>
         </div>
 
-        {/* Response Area */}
         <div className="flex flex-col items-center">
-          {/* Selected Word */}
           <div className="w-full py-2 mb-6 text-center border-b-2 border-gray-500">
             {selectedWord ? selectedWord : "Click on a word to respond..."}
           </div>
         </div>
 
-        {/* List of Available Words */}
         <div className="flex flex-wrap gap-2 mb-6">
           {availableWords.map((word, index) => (
             <button
               key={index}
-              className={`${buttonStyles.option} px-4 py-2 ${
-                selectedWord === word ? "bg-green-500" : ""
-              }`}
+              className={`${buttonStyles.option} px-4 py-2 ${selectedWord === word ? "bg-green-500" : ""}`}
               onClick={() => handleWordClick(word)}
             >
               {word}
@@ -166,36 +151,24 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
           ))}
         </div>
 
-        {/* Check if time is up */}
         {isTimeUp ? (
-          <div className="mb-4 text-lg font-semibold text-red-500">
-            Time over. You've lost.
-          </div>
+          <div className="mb-4 text-lg font-semibold text-red-500">Temps écoulé ! Vous avez perdu.</div>
         ) : (
           <>
-            {/* Feedback Message */}
             {isCorrect !== null && (
-              <div
-                className={`text-lg font-semibold mb-4 ${
-                  isCorrect ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {isCorrect ? "Correct!" : "Incorrect, try again."}
+              <div className={`text-lg font-semibold mb-4 ${isCorrect ? "text-green-500" : "text-red-500"}`}>
+                {isCorrect ? "Correct!" : "Incorrect, réessayez."}
               </div>
             )}
 
-            {/* Validate and Skip Buttons */}
             <div className="flex justify-between w-full mt-6">
-              <button
-                className={`${buttonStyles.secondary} px-6 py-2`}
-                onClick={handleReset}
-              >
-                Skip
+              <button className={`${buttonStyles.secondary} px-6 py-2`} onClick={handleReset}>
+                Passer
               </button>
               <button
                 className={`${buttonStyles.primary} px-6 py-2`}
                 onClick={handleValidate}
-                disabled={!selectedWord || isTimeUp || showPopup === "lost"} // Disable if time is up or lost
+                disabled={!selectedWord || isTimeUp || showPopup === "lost"}
               >
                 Check
               </button>
@@ -204,19 +177,13 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
         )}
       </div>
 
-      {/* Popup displayed on win or loss */}
       {showPopup === "won" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-green-500">
-              Congratulations !
-            </h2>
-            <p>You passed!</p>
-            <button
-              className={`${buttonStyles.primary} mt-4`}
-              onClick={handleReset}
-            >
-              Restart
+            <h2 className="text-2xl font-bold text-green-500">Félicitations !</h2>
+            <p>Vous avez gagné !</p>
+            <button className={`${buttonStyles.primary} mt-4`} onClick={handleNextStage}>
+              Suivant
             </button>
           </div>
         </div>
@@ -225,13 +192,10 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
       {showPopup === "lost" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-red-500">You lost! Try again!</h2>
-            <p>You've lost.</p>
-            <button
-              className={`${buttonStyles.primary} mt-4`}
-              onClick={handleReset}
-            >
-              Restart
+            <h2 className="text-2xl font-bold text-red-500">Désolé !</h2>
+            <p>Vous avez perdu.</p>
+            <button className={`${buttonStyles.primary} mt-4`} onClick={handleReset}>
+              Rejouer
             </button>
           </div>
         </div>
