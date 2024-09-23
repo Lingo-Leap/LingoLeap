@@ -5,12 +5,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TrueFalseQuizProps } from "../../types/Game";
 import axios from "axios";
+import { buttonStyles, containerStyles, typographyStyles } from "../../styles/styles"; // Imported styles
 
-/**
- * TrueFalseQuiz Component
- *
- * Handles true/false quiz questions with a timer and feedback.
- */
 const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
   const { languageId, stageId } = useParams();
   const navigate = useNavigate();
@@ -35,7 +31,6 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
     }
   }, [timeLeft, isTimeUp]);
 
-  // Handle time running out
   const handleTimeout = () => {
     setIsTimeUp(true);
     setSelectedAnswer(null);
@@ -43,7 +38,6 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
     setShowPopup("lost");
   };
 
-  // Handle user's answer selection
   const handleAnswer = (isTrue: boolean) => {
     setSelectedAnswer(isTrue);
     setFeedbackVisible(true);
@@ -55,7 +49,6 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
     }
   };
 
-  // Handle saving user progress
   const saveProgress = async () => {
     if (userId && stageId) {
       try {
@@ -72,52 +65,66 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
     }
   };
 
-  // Handle moving to the next question or stage
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswer(null);
-      setFeedbackVisible(false);
-      setTimeLeft(15);
-      setIsTimeUp(false);
-      setShowPopup(null);
+      resetQuizState();
     } else {
       handleNextStage();
     }
   };
 
-  // Handle navigating to the next stage
+  const resetQuizState = () => {
+    setSelectedAnswer(null);
+    setFeedbackVisible(false);
+    setTimeLeft(15);
+    setIsTimeUp(false);
+    setShowPopup(null);
+  };
+
   const handleNextStage = () => {
     const nextStageId = Number(stageId) + 1;
     navigate(`/language/${languageId}/stages/${nextStageId}/play`);
   };
 
   return (
-    <div>
-      <h3>{questions[currentQuestion].statement}</h3>
-      <button onClick={() => handleAnswer(true)}>Vrai</button>
-      <button onClick={() => handleAnswer(false)}>Faux</button>
+    <div className="flex flex-col items-center justify-center text-white">
+      <h3 className={typographyStyles.heading2}>{questions[currentQuestion].statement}</h3>
+      <div className="flex gap-4 mb-6">
+        <button className={buttonStyles.option} onClick={() => handleAnswer(true)}>
+          Vrai
+        </button>
+        <button className={buttonStyles.option} onClick={() => handleAnswer(false)}>
+          Faux
+        </button>
+      </div>
+
+      {/* Timer Display */}
+      <div className="mb-4 text-lg">{timeLeft} secondes restantes</div>
 
       {/* Display feedback */}
       {feedbackVisible && (
-        <p>
-          {selectedAnswer === questions[currentQuestion].isTrue
-            ? "Correct!"
-            : "Incorrect!"}
+        <p className="mb-4">
+          {selectedAnswer === questions[currentQuestion].isTrue ? "Correct!" : "Incorrect!"}
         </p>
       )}
 
       {isTimeUp && <p>Temps écoulé ! Vous avez perdu.</p>}
 
       {showPopup && (
-        <div className={`popup ${showPopup === "won" ? "won" : "lost"}`}>
-          <h2>{showPopup === "won" ? "Félicitations !" : "Désolé !"}</h2>
-          <p>{showPopup === "won" ? "Vous avez gagné !" : "Vous avez perdu."}</p>
+        <div className={`popup ${showPopup === "won" ? "won" : "lost"} fixed inset-0 flex items-center justify-center bg-black bg-opacity-50`}>
+          <div className="p-6 bg-white rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-green-500">{showPopup === "won" ? "Félicitations !" : "Désolé !"}</h2>
+            <p>{showPopup === "won" ? "Vous avez gagné !" : "Vous avez perdu."}</p>
+          </div>
         </div>
       )}
 
-      {/* Always show the "Suivant" button, but disable it if necessary */}
-      <button onClick={handleNext} disabled={selectedAnswer === null && !isTimeUp}>
+      <button
+        className={`${buttonStyles.primary} mt-4`}
+        onClick={handleNext}
+        disabled={selectedAnswer === null && !isTimeUp}
+      >
         Suivant
       </button>
     </div>
