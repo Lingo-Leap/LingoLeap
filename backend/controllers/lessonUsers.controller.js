@@ -193,11 +193,9 @@ module.exports = {
       res.status(500).json({ error: error.message });
     }
   },
-<<<<<<< HEAD
 
 
   
-=======
   async countPointsByUserId  (req, res)  {
     const {userId} = req.params 
     try {
@@ -209,5 +207,4 @@ module.exports = {
       res.status(500).json({ message: 'Erreur lors du calcul des points', error });
     }
   }
->>>>>>> 5bfb0e6a32704d0e6a3ed8d49efba0f7113370d4
 };
