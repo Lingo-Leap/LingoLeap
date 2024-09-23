@@ -10,6 +10,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 // Custom hooks and state management
 import { useAuth } from "./hooks/useAuth";
 import { store } from "./redux/store/store";
+import useTimer from "./hooks/useTimer";
+
 
 // Global styles
 import "./App.css";
@@ -33,9 +35,10 @@ import { RouteConfig } from "./types/RouteConfig";
  * @param {React.ReactNode} children - Child components to be wrapped.
  * @returns JSX.Element
  */
+
 const GameWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <>
-    <GameBar />
+    <GameBar timerValue={3} /> {/* Placeholder for timer value */}
     <div>{children}</div>
   </>
 );

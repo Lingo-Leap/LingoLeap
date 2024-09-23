@@ -14,10 +14,10 @@ import GameBar from "./GameBar";
  *
  * Wraps the children components with the GameBar.
  */
-const GameWrapper: React.FC<GameWrapperProps> = ({ children }) => {
+const GameWrapper: React.FC<GameWrapperProps> = ({ children, timerValue }) => {
   return (
     <>
-      <GameBar />
+      <GameBar timerValue={timerValue}/>
       <div>{children}</div>
     </>
   );

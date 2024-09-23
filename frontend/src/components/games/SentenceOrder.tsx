@@ -1,5 +1,7 @@
 import axios from "axios"; // Pour faire la requête POST
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux"; 
+import { decrementLives } from "../../redux/actions/gameActions";
 import { FiVolume2 } from "react-icons/fi"; // Icone pour le son (optionnelle)
 import { useParams } from "react-router-dom"; // Pour obtenir le stage et l'id depuis l'URL
 import { useDecodeToken } from "../../hooks/useDecode"; // Hook personnalisé pour décoder le token JWT
@@ -20,6 +22,8 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   scrambled,
   language,
 }) => {
+  const dispatch = useDispatch();
+
   const { stageId } = useParams(); // Récupérer l'id du stage depuis l'URL
   const decodedToken = useDecodeToken();
   const userId = decodedToken ? decodedToken.id : null; // Récupérer l'id de l'utilisateur depuis le token
@@ -30,6 +34,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   const [timeLeft, setTimeLeft] = useState(15); // Temps restant (en secondes)
   const [isTimeUp, setIsTimeUp] = useState(false); // Statut si le temps est écoulé
   const [showPopup, setShowPopup] = useState<string | null>(null); // Popup pour victoire ou défaite
+  const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
 
   // Utiliser useEffect pour mettre en place le timer
   useEffect(() => {
@@ -80,7 +85,11 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         }
       }
     } else {
-      setShowPopup("lost");
+      setIsCorrect(false);
+      setIncorrectCount(incorrectCount + 1); // Incrémenter le compteur de mauvaises réponses
+      dispatch(decrementLives()); // Décrémenter les vies
+      setShowPopup("lost"); // Afficher le popup de défaite
+      console.log("Réponse incorrecte");
     }
   };
 
@@ -108,7 +117,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
       </div>
 
       {/* Temps restant */}
-      <div className="mb-4 text-lg">{timeLeft} secondes restantes</div>
+      <div className="mb-4 text-lg">{timeLeft} seconds left</div>
 
       {/* Section Question */}
       <div className={`${containerStyles.card} flex flex-col items-center`}>
@@ -126,8 +135,19 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           <div className="w-full py-2 mb-6 text-center border-b-2 border-gray-500">
             {sentenceOrder.length > 0
               ? sentenceOrder.join(" ")
-              : "Cliquez sur un mot pour former une phrase"}
+              : "Form a sentence..."}
           </div>
+
+          {/* Message de feedback */}
+          {isCorrect !== null && (
+            <div
+              className={`text-lg font-semibold mb-4 ${
+                isCorrect ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {isCorrect ? "Correct!" : "Incorrect, try again."}
+            </div>
+          )}
         </div>
 
         {/* Liste de mots disponibles */}
@@ -149,14 +169,14 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
             className={`${buttonStyles.secondary} px-6 py-2`}
             onClick={handleReset}
           >
-            Passer
+            Skip
           </button>
           <button
             className={`${buttonStyles.primary} px-6 py-2`}
             onClick={handleSubmit}
             disabled={sentenceOrder.length !== scrambled.length || isTimeUp}
           >
-            Valider
+            Check
           </button>
         </div>
       </div>
@@ -166,14 +186,14 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-green-500">
-              Félicitations !
+              Congratulations !
             </h2>
-            <p>Vous avez réorganisé correctement la phrase !</p>
+            <p>You passed !</p>
             <button
               className={`${buttonStyles.primary} mt-4`}
               onClick={handleReset}
             >
-              Rejouer
+              Try again
             </button>
           </div>
         </div>
@@ -182,13 +202,13 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
       {showPopup === "lost" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-red-500">Désolé !</h2>
-            <p>Vous avez perdu. Essayez encore !</p>
+            <h2 className="text-2xl font-bold text-red-500">Sorry! You lost!</h2>
+            <p>You lost! Try again!</p>
             <button
               className={`${buttonStyles.primary} mt-4`}
               onClick={handleReset}
             >
-              Rejouer
+              Restart
             </button>
           </div>
         </div>

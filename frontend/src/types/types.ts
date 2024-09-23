@@ -26,8 +26,8 @@ export interface NavbarWrapperProps {
  */
 export interface GameWrapperProps {
   children: React.ReactNode; // Child components to be wrapped with GameBar
+  timerValue: number; // New prop for timer value
 }
-
 /**
  * Props for the StageListWrapper component.
  * Includes the languageId to filter stages based on language.
