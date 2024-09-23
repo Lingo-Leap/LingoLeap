@@ -80,7 +80,9 @@ const Achievements: React.FC = () => {
             if(response.data.totalPoints === null){
               setPoints(0)
             }else{
-            setPoints(response.data.totalPoints)}})
+            setPoints(response.data.totalPoints)
+            }
+          })
           .catch((error) => console.error("Error fetching points data:", error))
           .finally(() => setLoading(false));
       } catch (err) {

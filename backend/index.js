@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const path = require('path');
+const fs = require('fs');
 require("dotenv").config();
 require("./config/config");
-const path = require("path");
 require("./models");
 const morgan = require("morgan");
 const userRouter = require("./routers/user.router");
@@ -11,6 +12,8 @@ const lessonsRouter = require("./routers/lesson.router");
 const questionRouter = require("./routers/question.router");
 const choiceRouter = require("./routers/question.router");
 const lessonsUserRouter = require("./routers/lessonUsers.router.js");
+const textToSpeechRoutes = require('./routers/textToSpeechRoutes.js');
+
 const app = express();
 const port = process.env.PORT || 3000;
 const { apiMessageHandler } = require("./middleware");
@@ -24,6 +27,15 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Admin Routes
 const adminUserRouter = require("./admin/adminRouters/admin.user.router");
 const adminLanguageRouter = require("./admin/adminRouters/admin.language.router");
+
+// Create the sounds directory if it doesn't exist
+const soundsDir = path.join(__dirname, 'sounds');
+if (!fs.existsSync(soundsDir)) {
+  fs.mkdirSync(soundsDir);
+}
+// Serve static files from the sounds directory
+app.use('/sounds', express.static(soundsDir));
+
 app.use("/api/admin/user", adminUserRouter);
 app.use("/api/admin/languages", adminLanguageRouter);
 
@@ -33,6 +45,7 @@ app.use("/api/lessons", lessonsRouter);
 app.use("/api/question", questionRouter);
 app.use("/api/choices", choiceRouter);
 app.use("/api/lessonsUsers", lessonsUserRouter);
+app.use('/api', textToSpeechRoutes);
 app.listen(port, () => {
   console.log(`Server running on port  http://localhost:${port}`);
 });
