@@ -194,8 +194,11 @@ module.exports = {
     }
   },
 
-  async countPointsByUserId(req, res) {
-    const { userId } = req.params;
+
+  
+  async countPointsByUserId  (req, res)  {
+    const {userId} = req.params 
+
     try {
       const totalPoints = await LessonsUsers.sum("progress", {
         where: { userId },
@@ -207,5 +210,8 @@ module.exports = {
         .status(500)
         .json({ message: "Erreur lors du calcul des points", error });
     }
+
   },
+
+ 
 };
