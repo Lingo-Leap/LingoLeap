@@ -112,7 +112,7 @@ module.exports = {
   },
 
   // Récupérer le nombre de leçons actives et terminées pour un utilisateur
-  
+
   getActiveAndCompletedLessonsCount: async (req, res) => {
     try {
       const userId = req.params.userId;
@@ -198,13 +198,20 @@ module.exports = {
   
   async countPointsByUserId  (req, res)  {
     const {userId} = req.params 
+
     try {
-      const totalPoints = await LessonsUsers.sum("progress",{where: {userId},});
-  
-  
+      const totalPoints = await LessonsUsers.sum("progress", {
+        where: { userId },
+      });
+
       res.status(200).json({ totalPoints });
     } catch (error) {
-      res.status(500).json({ message: 'Erreur lors du calcul des points', error });
+      res
+        .status(500)
+        .json({ message: "Erreur lors du calcul des points", error });
     }
-  }
+
+  },
+
+ 
 };
