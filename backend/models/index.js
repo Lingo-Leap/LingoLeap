@@ -67,10 +67,10 @@ LessonsUsers.belongsTo(Lesson, { foreignKey: "lessonId" });
 // const lessonFaker = require("./faker/lesson").up(Lesson, sequelize);
 // const questionFaker = require("./faker/question").up(Question, sequelize);
 
-// const achievementFaker = require("./faker/acheivement").up(
-//   Achievement,
-//   sequelize
-// );
+const achievementFaker = require("./faker/acheivement").up(
+  Achievement,
+  sequelize
+);
 
 module.exports = {
   User,
