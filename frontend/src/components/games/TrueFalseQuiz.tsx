@@ -1,6 +1,7 @@
 // ==============================
 // Importing React and Hooks
 // ==============================
+
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TrueFalseQuizProps } from "../../types/Game";
@@ -126,7 +127,7 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
         disabled={selectedAnswer === null && !isTimeUp}
       >
         Suivant
-      </button>
+      </button> 
     </div>
   );
 };

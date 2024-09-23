@@ -112,4 +112,29 @@ module.exports = {
       res.status(500).json({ error: error.message });
     }
   },
+
+
+
+  async getStagesCountByLesson(req, res) {
+    try {
+      const { lessonId } = req.params;
+      const lesson = await Lesson.findOne({ where: { id: lessonId } });
+
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found." });
+      }
+
+      // Assuming each lesson has a 'stages' field or related stages table
+      const totalStages = lesson.stages.length; // Adjust according to your model
+      res.status(200).json({ totalStages });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Check if all stages are completed
+  
+
+
+
 };
