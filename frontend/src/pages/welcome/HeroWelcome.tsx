@@ -15,6 +15,7 @@ import {
   typographyStyles, // Styles for typography (headings, etc.)
 } from "../../styles/styles"; // Centralized styles for consistency
 
+
 /**
  * HeroWelcome Component
  *
@@ -22,6 +23,7 @@ import {
  * offering sign-up and login options with stylish buttons.
  */
 const HeroWelcome: React.FC = () => {
+  
   return (
     <div className={`${containerStyles.fullScreenCenter} p-4`}>
       {/* Main Card Section */}
