@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
 import { useParams } from "react-router-dom"; // Pour obtenir la langue et le stage
 import { useDecodeToken } from "../../hooks/useDecode"; // Hook personnalisé pour décoder le token JWT
+import { useDispatch } from "react-redux";
+import { incrementEnergy } from "../../redux/actions/gameActions";
 import {
   buttonStyles,
   containerStyles,
@@ -30,6 +32,7 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
   const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
   const [showPopup, setShowPopup] = useState<string | null>(null); // Popup pour victoire ou défaite
 
+  const dispatch = useDispatch();
   // Utiliser useEffect pour mettre en place le timer
   useEffect(() => {
     console.log(stageId);
@@ -76,7 +79,7 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
       setIsCorrect(true);
       setShowPopup("won");
       console.log("Bonne réponse, vous avez gagné !");
-
+      dispatch(incrementEnergy(10));
       // Vérifier les données avant l'envoi
       console.log("Données envoyées :", {
         userId,
