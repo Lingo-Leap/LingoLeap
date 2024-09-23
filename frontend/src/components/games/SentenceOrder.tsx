@@ -1,63 +1,54 @@
-import axios from "axios"; // Pour faire la requête POST
+import axios from "axios"; // For making the POST request
 import React, { useEffect, useState } from "react";
-import { FiVolume2 } from "react-icons/fi"; // Icone pour le son (optionnelle)
-import { useParams } from "react-router-dom"; // Pour obtenir le stage et l'id depuis l'URL
-import { useDecodeToken } from "../../hooks/useDecode"; // Hook personnalisé pour décoder le token JWT
+import { FiVolume2 } from "react-icons/fi"; // Icon for sound (optional)
+import { useParams, useNavigate } from "react-router-dom"; // To get the stage and ID from the URL
+import { useDecodeToken } from "../../hooks/useDecode"; // Custom hook to decode JWT token
 import {
   buttonStyles,
   containerStyles,
   typographyStyles,
-} from "../../styles/styles"; // Styles importés
-import { SentenceOrderProps } from "../../types/Game"; // Importer le type SentenceOrderProps
+} from "../../styles/styles"; // Imported styles
+import { SentenceOrderProps } from "../../types/Game"; // Importing SentenceOrderProps type
 
-/**
- * SentenceOrderQuiz Component
- *
- * Manages the sentence ordering quiz where the user has to rearrange words to form a correct sentence.
- */
 const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   sentence,
   scrambled,
   language,
 }) => {
-  const { stageId } = useParams(); // Récupérer l'id du stage depuis l'URL
+  const { stageId, languageId } = useParams(); // Get the stage ID from the URL
+  const navigate = useNavigate(); // Use navigate to go to the next stage
   const decodedToken = useDecodeToken();
-  const userId = decodedToken ? decodedToken.id : null; // Récupérer l'id de l'utilisateur depuis le token
+  const userId = decodedToken ? decodedToken.id : null; // Get the user ID from the token
 
-  const [sentenceOrder, setSentenceOrder] = useState<string[]>([]); // L'ordre des mots sélectionnés par l'utilisateur
-  const [availableWords, setAvailableWords] = useState<string[]>(scrambled); // Mots disponibles à sélectionner
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Pour gérer si la réponse est correcte
-  const [timeLeft, setTimeLeft] = useState(15); // Temps restant (en secondes)
-  const [isTimeUp, setIsTimeUp] = useState(false); // Statut si le temps est écoulé
-  const [showPopup, setShowPopup] = useState<string | null>(null); // Popup pour victoire ou défaite
+  const [sentenceOrder, setSentenceOrder] = useState<string[]>([]);
+  const [availableWords, setAvailableWords] = useState<string[]>(scrambled);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [timeLeft, setTimeLeft] = useState(15);
+  const [isTimeUp, setIsTimeUp] = useState(false);
+  const [showPopup, setShowPopup] = useState<string | null>(null);
 
-  // Utiliser useEffect pour mettre en place le timer
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1000);
-
-      return () => clearInterval(timer); // Nettoyage de l'intervalle lorsque le composant est démonté ou si le timer change
+      return () => clearInterval(timer);
     } else if (timeLeft === 0) {
-      setIsTimeUp(true); // Temps écoulé
+      setIsTimeUp(true);
       setShowPopup("lost");
     }
   }, [timeLeft, showPopup]);
 
-  // Handle word selection to form the sentence
   const handleWordSelection = (word: string) => {
     if (!sentenceOrder.includes(word)) {
       setSentenceOrder([...sentenceOrder, word]);
-      setAvailableWords(availableWords.filter((w) => w !== word)); // Retirer le mot sélectionné des mots disponibles
+      setAvailableWords(availableWords.filter((w) => w !== word));
     }
   };
 
-  // Handle sentence submission
   const handleSubmit = async () => {
-    const correctOrder = sentence.split(" "); // Convertir la phrase correcte en tableau
-    const isCorrectSentence =
-      sentenceOrder.join(" ") === correctOrder.join(" ");
+    const correctOrder = sentence.split(" ");
+    const isCorrectSentence = sentenceOrder.join(" ") === correctOrder.join(" ");
     setIsCorrect(isCorrectSentence);
 
     if (isCorrectSentence) {
@@ -67,16 +58,16 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           const response = await axios.post(
             `http://localhost:1274/api/lessonsUsers/post`,
             {
-              userId: userId,
+              userId,
               lessonId: Number(stageId),
               isActive: true,
-              progress: 100, // Puisqu'il a gagné, le progrès est à 100%
+              progress: 100,
               isCompleted: true,
             }
           );
-          console.log("Données postées avec succès : ", response.data);
+          console.log("Data posted successfully: ", response.data);
         } catch (error: any) {
-          console.error("Erreur lors de la requête : ", error);
+          console.error("Error during the request: ", error);
         }
       }
     } else {
@@ -84,22 +75,24 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
     }
   };
 
-  // Réinitialiser le quiz
   const handleReset = () => {
-    setSentenceOrder([]); // Réinitialiser l'ordre des mots sélectionnés
-    setAvailableWords(scrambled); // Réinitialiser les mots disponibles
-    setIsCorrect(null); // Réinitialiser le statut de la réponse
-    setTimeLeft(15); // Réinitialiser le temps
-    setIsTimeUp(false); // Réinitialiser l'état du timer
-    setShowPopup(null); // Fermer le popup
+    setSentenceOrder([]);
+    setAvailableWords(scrambled);
+    setIsCorrect(null);
+    setTimeLeft(15);
+    setIsTimeUp(false);
+    setShowPopup(null);
   };
 
-  // Calculer la largeur de la barre de progression en fonction du temps restant
+  const handleNextStage = () => {
+    const nextStageId = Number(stageId) + 1;
+    navigate(`/language/${languageId}/stages/${nextStageId}/play`);
+  };
+
   const progressBarWidth = (timeLeft / 15) * 100;
 
   return (
     <div className="flex flex-col items-center justify-center text-white">
-      {/* Barre de progression */}
       <div className="w-full max-w-xl bg-gray-700 rounded-full h-2.5 my-4">
         <div
           className="bg-green-500 h-2.5 rounded-full"
@@ -107,10 +100,8 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         />
       </div>
 
-      {/* Temps restant */}
       <div className="mb-4 text-lg">{timeLeft} secondes restantes</div>
 
-      {/* Section Question */}
       <div className={`${containerStyles.card} flex flex-col items-center`}>
         <div className="flex items-center mb-4">
           <h2 className={`${typographyStyles.heading2} mr-4`}>
@@ -121,7 +112,6 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           </button>
         </div>
 
-        {/* Zone de réponse */}
         <div className="flex flex-col items-center">
           <div className="w-full py-2 mb-6 text-center border-b-2 border-gray-500">
             {sentenceOrder.length > 0
@@ -130,7 +120,6 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           </div>
         </div>
 
-        {/* Liste de mots disponibles */}
         <div className="flex flex-wrap gap-2 mb-6">
           {availableWords.map((word, index) => (
             <button
@@ -143,7 +132,6 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           ))}
         </div>
 
-        {/* Boutons Valider et Passer */}
         <div className="flex justify-between w-full mt-6">
           <button
             className={`${buttonStyles.secondary} px-6 py-2`}
@@ -161,19 +149,16 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         </div>
       </div>
 
-      {/* Popup de victoire ou de défaite */}
       {showPopup === "won" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-green-500">
-              Félicitations !
-            </h2>
+            <h2 className="text-2xl font-bold text-green-500">Félicitations !</h2>
             <p>Vous avez réorganisé correctement la phrase !</p>
             <button
               className={`${buttonStyles.primary} mt-4`}
-              onClick={handleReset}
+              onClick={handleNextStage}
             >
-              Rejouer
+              Suivant
             </button>
           </div>
         </div>
