@@ -1,6 +1,10 @@
 import axios from "axios"; // For making the POST request
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi"; // Icon for sound (optional)
+import { decrementLives
+ } from "../../redux/actions/gameActions";
+
+ import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom"; // To get the stage and ID from the URL
 import { useDecodeToken } from "../../hooks/useDecode"; // Custom hook to decode JWT token
 import {
@@ -15,11 +19,13 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   scrambled,
   language,
 }) => {
+  const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
+
   const { stageId, languageId } = useParams(); // Get the stage ID from the URL
   const navigate = useNavigate(); // Use navigate to go to the next stage
   const decodedToken = useDecodeToken();
   const userId = decodedToken ? decodedToken.id : null; // Get the user ID from the token
-
+  const dispatch = useDispatch(); // Use dispatch to
   const [sentenceOrder, setSentenceOrder] = useState<string[]>([]);
   const [availableWords, setAvailableWords] = useState<string[]>(scrambled);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);

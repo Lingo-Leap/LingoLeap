@@ -1,13 +1,9 @@
-// ==============================
-// Importing React, Redux, and Components
-// ==============================
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux"; // Include useDispatch for actions
-import GameBar from "../../components/games/GameBar"; // Import GameBar
-import Lobby from "../../components/games/LobbyLanguage"; // Lobby component to display available languages
+// Home.tsx
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import GameWrapper from "../../components/games/GameWrapper"; // Wrapper for the game logic
+import Lobby from "../../components/games/LobbyLanguage"; // Lobby component to display available languages
 import { setTime } from "../../redux/actions/gameActions"; // Action to increment time
-import useTimer from "../../hooks/useTimer"; // Import the timer hook
 
 /**
  * Home Component
@@ -17,12 +13,22 @@ import useTimer from "../../hooks/useTimer"; // Import the timer hook
  */
 const Home: React.FC = () => {
   const dispatch = useDispatch();
-  const { displayTimer, remainingSeconds } = useTimer(); // Get the timer value and remaining seconds from the hook
-
+  
+  const initialTimerValue = 10; // Set the initial timer value to 10 seconds
+  const [remainingSeconds, setRemainingSeconds] = useState(initialTimerValue);
+  
   useEffect(() => {
-    // Set up a timer to increment the time every second
+    // Set up a timer to decrement the remaining seconds
     const interval = setInterval(() => {
-      dispatch(setTime()); // Dispatch action to increment time
+      setRemainingSeconds(prev => {
+        if (prev > 0) {
+          dispatch(setTime()); // Dispatch action to increment time
+          return prev - 1; // Decrement the timer
+        } else {
+          clearInterval(interval); // Clear the interval if the timer reaches 0
+          return 0; // Ensure it doesn't go below 0
+        }
+      });
     }, 1000);
 
     // Clear the timer on unmount to prevent memory leaks
@@ -32,14 +38,11 @@ const Home: React.FC = () => {
   return (
     <div>
       {/* Display the GameWrapper with timerValue passed to it */}
-      <GameWrapper timerValue={remainingSeconds}>
-        {/* Display the Navbar (GameBar with lives, energy, etc.) */}
-        
+      <GameWrapper initialTimerValue={remainingSeconds}>
         {/* Display the Lobby with available languages */}
         <Lobby />
       </GameWrapper>
       {/* Optionally display the formatted timer for user visibility */}
-      <div className="timer-display">{displayTimer}</div>
     </div>
   );
 };

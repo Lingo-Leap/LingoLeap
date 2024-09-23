@@ -1,13 +1,10 @@
 import axios from "axios"; // For making POST requests
 import { useDispatch, useSelector } from "react-redux"; 
-import { decrementLives, setExtraLives } from "../../redux/actions/gameActions";
-import axios from "axios";
+import { decrementLives, setExtraLives, incrementEnergy } from "../../redux/actions/gameActions";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDecodeToken } from "../../hooks/useDecode";
-import { useDispatch } from "react-redux";
-import { incrementEnergy } from "../../redux/actions/gameActions";
 import {
   buttonStyles,
   containerStyles,
@@ -27,16 +24,17 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
   const navigate = useNavigate(); // Use navigate to go to the next stage
   const decodedToken = useDecodeToken();
   const userId = decodedToken ? decodedToken.id : null;
-  const [selectedWord, setSelectedWord] = useState<string | null>(null); // Un seul mot sélectionné
-  const [availableWords, setAvailableWords] = useState([...questions.options]); // Les mots disponibles
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Statut de la réponse
-  const [timeLeft, setTimeLeft] = useState(15); // Temps restant (en secondes)
-  const [isTimeUp, setIsTimeUp] = useState(false); // Statut pour vérifier si le temps est écoulé
-  const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
-  const [showPopup, setShowPopup] = useState<string | null>(null); // Popup pour victoire ou défaite
+  const [selectedWord, setSelectedWord] = useState<string | null>(null); // Selected word
+  const [availableWords, setAvailableWords] = useState([...questions.options]); // Available words
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Answer status
+  const [timeLeft, setTimeLeft] = useState(15); // Time left in seconds
+  const [isTimeUp, setIsTimeUp] = useState(false); // Time status
+  const [incorrectCount, setIncorrectCount] = useState(0); // Incorrect answer count
+  const [showPopup, setShowPopup] = useState<string | null>(null); // Popup for win/lose
 
   const dispatch = useDispatch();
-  // Utiliser useEffect pour mettre en place le timer
+
+  // Set up timer
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
@@ -47,8 +45,6 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
       setIsTimeUp(true);
       setShowPopup("lost");
     }
-
-    // console.log("--------",useParams())
   }, [timeLeft, showPopup]);
 
   const handleWordClick = (word: string) => {
@@ -76,26 +72,18 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
     if (selectedWord === questions.answer) {
       setIsCorrect(true);
       setShowPopup("won");
-      console.log("Bonne réponse, vous avez gagné !");
       dispatch(incrementEnergy(10));
-      // Vérifier les données avant l'envoi
-      console.log("Données envoyées :", {
-        userId,
-        lessonId: Number(stageId),
-        isActive: true,
-        progress: 100,
-        isCompleted: true,
-      });
 
+      // Check user data before posting
       if (userId && stageId) {
         try {
           const response = await axios.post(
             `http://localhost:1274/api/lessonsUsers/post`,
             {
               userId: userId,
-              lessonId: Number(stageId), // stage corresponds to lessonId
+              lessonId: Number(stageId),
               isActive: true,
-              progress: 100, // Since they won, progress is 100%
+              progress: 100,
               isCompleted: true,
             }
           );
@@ -107,6 +95,7 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
     } else {
       setIsCorrect(false);
       setIncorrectCount(incorrectCount + 1);
+      dispatch(decrementLives()); // Decrement lives on incorrect answer
     }
   };
 

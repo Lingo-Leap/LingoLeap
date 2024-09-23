@@ -1,12 +1,6 @@
-// ==============================
-// Importing React and Types
-// ==============================
+// GameWrapper.tsx
 import React from "react";
-import { GameWrapperProps } from "../../types/types"; // Import the separated type
-
-// ==============================
-// Importing Components
-// ==============================
+import { GameWrapperProps } from "../../types/types"; // Import the updated type
 import GameBar from "./GameBar";
 
 /**
@@ -14,10 +8,10 @@ import GameBar from "./GameBar";
  *
  * Wraps the children components with the GameBar.
  */
-const GameWrapper: React.FC<GameWrapperProps> = ({ children, timerValue }) => {
+const GameWrapper: React.FC<GameWrapperProps> = ({ children, initialTimerValue }) => {
   return (
     <>
-      <GameBar timerValue={timerValue}/>
+      <GameBar initialTimerValue={initialTimerValue} />
       <div>{children}</div>
     </>
   );

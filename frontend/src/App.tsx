@@ -35,7 +35,7 @@ import { RouteConfig } from "./types/RouteConfig";
 
 const GameWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <>
-    <GameBar timerValue={3} /> {/* Placeholder for timer value */}
+    <GameBar initialTimerValue={10} /> {/* Placeholder for timer value */}
     <div>{children}</div>
   </>
 );
