@@ -17,7 +17,11 @@ export const resetTime = createAction("game/resetTime");
 
 // Energy actions
 export const decrementEnergy = createAction("game/decrementEnergy");
-export const incrementEnergy = createAction("game/incrementEnergy");
+export const incrementEnergy = createAction<number>("game/incrementEnergy");
+
+// Progress actions
+export const setProgress = createAction<number>("game/setProgress");
+export const incrementProgress = createAction<number>("game/incrementProgress");
 
 // Coins actions
 export const addCoins = createAction<number>("game/addCoins");

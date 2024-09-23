@@ -16,6 +16,7 @@ import { ReactComponent as MortIcon } from "../../assets/icons/toxique.svg";
 // ==============================
 import { RootState } from "../../redux/store/store";
 
+
 /**
  * Navbar Component
  *
@@ -27,7 +28,8 @@ const Navbar: React.FC = () => {
   const energy = useSelector((state: RootState) => state.game.energy);
   const coins = useSelector((state: RootState) => state.game.coins);
   const extraLives = useSelector((state: RootState) => state.game.extraLives);
-
+  // const progress = useSelector((state: RootState) => state.game.progress);
+  
   return (
     <div className="flex flex-col items-center justify-center px-4 py-4 md:flex-row md:space-x-4">
       {/* Lives Section */}
@@ -43,15 +45,16 @@ const Navbar: React.FC = () => {
         ))}
       </div>
 
-      {/* Energy Section */}
-      <div className="flex items-center p-2 rounded-full shadow-md bg-duolingoDark2">
+     {/* Progress Section */}
+     <div className="flex items-center p-2 rounded-full shadow-md bg-duolingoDark2">
         <div className="relative w-40 h-6 mx-2 bg-gray-200 rounded-full">
           <div
-            className="absolute left-0 h-full bg-blue-500 rounded-full"
-            style={{ width: `${(energy / 10) * 100}%` }}
+            className="absolute left-0 h-full bg-green-500 rounded-full"
+            style={{ width: `${energy}%` }} 
+            
           />
           <span className="absolute inset-0 flex items-center justify-center text-white">
-            {energy}/10
+            {energy}%
           </span>
         </div>
       </div>
@@ -64,12 +67,12 @@ const Navbar: React.FC = () => {
 
       {/* Extra Lives Section */}
       <div className="flex items-center p-2 rounded-full shadow-md bg-duolingoDark2">
-        <CoeurIcon className="w-6 h-6" />
-        <span className="ml-2 font-bold text-white">
-          {extraLives.current}/{extraLives.max}
-        </span>
-        <span className="ml-2 text-red-500">{extraLives.timer}</span>
-      </div>
+          <CoeurIcon className="w-6 h-6" />
+          <span className="ml-2 font-bold text-white">
+            {extraLives.current}/{extraLives.max}
+          </span>
+          <span className="ml-2 text-red-500">{extraLives.timer}</span>
+        </div>
     </div>
   );
 };

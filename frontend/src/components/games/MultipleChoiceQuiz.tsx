@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDecodeToken } from "../../hooks/useDecode";
+import { useDispatch } from "react-redux";
+import { incrementEnergy } from "../../redux/actions/gameActions";
 import {
   buttonStyles,
   containerStyles,
@@ -22,18 +24,16 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
   const navigate = useNavigate(); // Use navigate to go to the next stage
   const decodedToken = useDecodeToken();
   const userId = decodedToken ? decodedToken.id : null;
+  const [selectedWord, setSelectedWord] = useState<string | null>(null); // Un seul mot sélectionné
+  const [availableWords, setAvailableWords] = useState([...questions.options]); // Les mots disponibles
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Statut de la réponse
+  const [timeLeft, setTimeLeft] = useState(15); // Temps restant (en secondes)
+  const [isTimeUp, setIsTimeUp] = useState(false); // Statut pour vérifier si le temps est écoulé
+  const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
+  const [showPopup, setShowPopup] = useState<string | null>(null); // Popup pour victoire ou défaite
 
-
-
-
-  const [selectedWord, setSelectedWord] = useState<string | null>(null);
-  const [availableWords, setAvailableWords] = useState([...questions.options]);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(15);
-  const [isTimeUp, setIsTimeUp] = useState(false);
-  const [incorrectCount, setIncorrectCount] = useState(0);
-  const [showPopup, setShowPopup] = useState<string | null>(null);
-
+  const dispatch = useDispatch();
+  // Utiliser useEffect pour mettre en place le timer
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
@@ -73,17 +73,31 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
     if (selectedWord === questions.answer) {
       setIsCorrect(true);
       setShowPopup("won");
+      console.log("Bonne réponse, vous avez gagné !");
+      dispatch(incrementEnergy(10));
+      // Vérifier les données avant l'envoi
+      console.log("Données envoyées :", {
+        userId,
+        lessonId: Number(stageId),
+        isActive: true,
+        progress: 100,
+        isCompleted: true,
+      });
 
       if (userId && stageId) {
         try {
-          await axios.post(`http://localhost:1274/api/lessonsUsers/post`, {
-            userId,
-            lessonId: Number(stageId),
-            isActive: true,
-            progress: 100,
-            isCompleted: true,
-          });
-        } catch (error) {
+          const response = await axios.post(
+            `http://localhost:1274/api/lessonsUsers/post`,
+            {
+              userId: userId,
+              lessonId: Number(stageId), // stage correspond au lessonId
+              isActive: true,
+              progress: 100, // Puisqu'il a gagné, le progrès est à 100%
+              isCompleted: true,
+            }
+          );
+          console.log("Données postées avec succès : ", response.data);
+        } catch (error: any) {
           console.error("Erreur lors de la requête : ", error);
         }
       }
