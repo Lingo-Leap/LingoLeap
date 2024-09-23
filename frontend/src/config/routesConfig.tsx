@@ -6,6 +6,7 @@
 import Lobby from "../components/games/LobbyLanguage";
 import Play from "../components/games/Play";
 import StageListWrapper from "../components/games/StageListWrapper";
+import MultipleChoiceQuiz from "../components/games/MultipleChoiceQuiz"; // Fixed import statement
 
 // Import page components
 import AchievementsPage from "../pages/achievements/Achievements";
@@ -16,6 +17,7 @@ import Home from "../pages/home/Home";
 import Terme from "../pages/home/Termes";
 import UserProfile from "../pages/profile/UserProfile";
 import HeroWelcome from "../pages/welcome/HeroWelcome";
+
 
 // Import type definitions
 import { RouteConfig } from "../types/RouteConfig";
@@ -63,7 +65,7 @@ export const ROUTES: RouteConfig[] = [
     component: <Terme />,
     isProtected: false,
     withNavbar: false,
-    // Termes and Codnitions without navigation bar
+    // Terms and Conditions without navigation bar
   },
   {
     path: "/admin-dashboard",
@@ -110,4 +112,5 @@ export const ROUTES: RouteConfig[] = [
     useGameLayout: true,
     // Interface for playing a specific stage within a language
   },
+ 
 ];

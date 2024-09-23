@@ -112,6 +112,7 @@ module.exports = {
   },
 
   // Récupérer le nombre de leçons actives et terminées pour un utilisateur
+  
   getActiveAndCompletedLessonsCount: async (req, res) => {
     try {
       const userId = req.params.userId;
@@ -192,6 +193,9 @@ module.exports = {
       res.status(500).json({ error: error.message });
     }
   },
+
+
+  
   async countPointsByUserId  (req, res)  {
     const {userId} = req.params 
     try {

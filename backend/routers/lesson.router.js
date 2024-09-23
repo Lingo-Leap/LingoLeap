@@ -22,4 +22,13 @@ router.get(
   "/user/:userId/language/:languageId/progress",
   lessonController.getUserProgressInLanguage
 );
+
+router.get(
+  "/:lessonId/stages/count",
+  lessonController.getLessonsCountByLanguageId
+);
+
+// // Check if all stages are completed for a user in a language
+// router.get("/user/:userId/language/:languageId/stages/completed", lessonController.checkAllStagesCompleted);
+
 module.exports = router;
