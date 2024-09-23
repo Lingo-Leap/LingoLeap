@@ -15,7 +15,7 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
   const navigate = useNavigate();
   const decodedToken = useDecodeToken();
   const userId = decodedToken ? decodedToken.id : null;
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchLessonsAndProgress = async () => {
