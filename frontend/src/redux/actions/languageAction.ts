@@ -1,13 +1,19 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { Language } from '../types';
+// ==============================
+// Importing Redux Toolkit and Axios
+// ==============================
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { Language } from "../../types/types"; // Importing the Language type
 
+// ==============================
+// Fetch Languages Async Thunk
+// ==============================
 export const fetchLanguages = createAsyncThunk<Language[], void>(
-  'languages/fetchLanguages',
+  "languages/fetchLanguages",
   async () => {
-    const response = await axios.get('http://localhost:1274/api/language/get'); 
+    const response = await axios.get("http://localhost:1274/api/language/get");
 
-    return response.data; 
-   
+    // Return the array of languages
+    return response.data;
   }
 );

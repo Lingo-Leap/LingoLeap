@@ -5,6 +5,7 @@ const User = require("../models/user.model");
 module.exports = {
   // Create new
   async create(req, res) {
+    console.log(req.body);
     try {
       const lessonsUsers = await LessonsUsers.create(req.body);
       res.status(201).json(lessonsUsers);
@@ -130,6 +131,64 @@ module.exports = {
         completedLessons: completedCount,
       });
     } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  async getUserProgressInLanguage(req, res) {
+    console.log("ok");
+    const { userId, languageId } = req.params;
+
+    try {
+      // Trouver toutes les leçons liées à la langue et à l'utilisateur
+      const lessonsProgress = await LessonsUsers.findAll({
+        where: { userId },
+        include: [
+          {
+            model: Lesson,
+            where: { languageId }, // Filtrer par langue
+            include: [Language], // Inclure les informations de la langue
+          },
+        ],
+      });
+
+      if (lessonsProgress.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No progress found for this language." });
+      }
+
+      res.status(200).json(lessonsProgress);
+    } catch (error) {
+      console.error("Error fetching user progress:", error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+  async getUserProgressInLanguage(req, res) {
+    console.log("ok");
+    const { userId, languageId } = req.params;
+
+    try {
+      // Trouver toutes les leçons liées à la langue et à l'utilisateur
+      const lessonsProgress = await LessonsUsers.findAll({
+        where: { userId },
+        include: [
+          {
+            model: Lesson,
+            where: { languageId }, // Filtrer par langue
+            include: [Language], // Inclure les informations de la langue
+          },
+        ],
+      });
+
+      if (lessonsProgress.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No progress found for this language." });
+      }
+
+      res.status(200).json(lessonsProgress);
+    } catch (error) {
+      console.error("Error fetching user progress:", error);
       res.status(500).json({ error: error.message });
     }
   },

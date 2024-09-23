@@ -12,9 +12,13 @@ const LessonsUsers = sequelize.define("LessonsUsers", {
     allowNull: false,
     defaultValue: 0,
   },
+  isCompleted: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   userId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     references: {
       model: "User",
       key: "id",
@@ -22,16 +26,10 @@ const LessonsUsers = sequelize.define("LessonsUsers", {
   },
   lessonId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     references: {
       model: "Lesson",
       key: "id",
     },
-  },
-  isCompleted: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false, // Valeur par défaut
   },
 });
 

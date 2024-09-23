@@ -1,82 +1,83 @@
-import { jwtDecode } from "jwt-decode"; // Import jwt-decode
+import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  login,
-  logout,
-  signup,
-  updateUserProfile,
-} from "../store/features/authSlice";
-import { AppDispatch, RootState } from "../store/store";
 
-// Define the structure of your decoded token (adjust based on your token structure)
+import { login, logout, signup } from "../redux/actions/authActions";
+import { AppDispatch, RootState } from "../redux/store/store";
+
+// Define the structure of the decoded token
 interface DecodedToken {
   userId: string;
   role: string;
   exp: number;
 }
 
+// Utility function to check if the token is expired
+const isTokenExpired = (exp: number): boolean => Date.now() >= exp * 1000;
+
 export function useAuth() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // Select authentication state from Redux store
-  const { token, userId, loading, error } = useSelector(
+  const { token, loading, error } = useSelector(
     (state: RootState) => state.auth
   );
 
-  // Check if the user is authenticated based on token presence
   const isAuthenticated = Boolean(token);
-
-  // Initialize isAdmin as false
   let isAdmin = false;
 
-  // Decode the token to get the user's role (if token exists)
+  // Decode token and verify expiration
   if (token) {
-    const decoded: DecodedToken = jwtDecode(token);
-    isAdmin = decoded.role === "admin"; // Check if the role is admin
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+
+      if (isTokenExpired(decoded.exp)) {
+        dispatch(logout());
+        localStorage.removeItem("token");
+        navigate("/");
+      } else {
+        isAdmin = decoded.role === "admin";
+      }
+    } catch (err) {
+      console.error("Failed to decode token", err);
+      dispatch(logout());
+    }
   }
 
-  // Helper functions for login, signup, logout
+  // Handle user login
   const loginUser = async (email: string, password: string) => {
-    await dispatch(login({ email, passwordHash: password })).unwrap();
-    if (token) {
-      navigate("/home");
+    try {
+      await dispatch(login({ email, passwordHash: password })).unwrap();
+      if (token) navigate("/home");
+    } catch (err) {
+      console.error("Login failed", err);
     }
   };
 
+  // Handle user registration
   const registerUser = async (formData: FormData) => {
-    await dispatch(signup(formData)).unwrap();
-    if (token) {
-      navigate("/home");
+    try {
+      await dispatch(signup(formData)).unwrap();
+      if (token) navigate("/home");
+    } catch (err) {
+      console.error("Signup failed", err);
     }
   };
 
+  // Handle user logout
   const logoutUser = () => {
     dispatch(logout());
-    navigate("/login");
-  };
-
-  const updateProfile = async (updatedData: {
-    userId: string;
-    username: string;
-    email: string;
-    currentPassword?: string;
-    newPassword?: string;
-    confirmPassword?: string;
-  }) => {
-    await dispatch(updateUserProfile(updatedData)).unwrap();
-    // Optionally navigate or perform other actions after profile update
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   return {
     isAuthenticated,
-    isAdmin, // Return isAdmin
+    isAdmin,
     loading,
     error,
     loginUser,
     registerUser,
     logoutUser,
-    updateProfile,
   };
 }

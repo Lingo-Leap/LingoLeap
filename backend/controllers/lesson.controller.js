@@ -1,69 +1,113 @@
-const Lesson = require('../models/lesson.model');
-const Question = require('../models/question.model')
-const Choice = require("../models/choice.model")
+const { LessonsUsers, Language, Lesson } = require("../models/index");
 module.exports = {
-  
-  async create(req, res) {
+  // Get all lessons by language ID
+  async getLessonsByLanguageId(req, res) {
     try {
-      const lesson = await Lesson.create(req.body);
-      res.status(201).json(lesson);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  },
-
-  getAll: async (req, res) => {
-    try {
+      const { languageId } = req.params;
       const lessons = await Lesson.findAll({
-        include: [
-          {
-            model: Question, 
-            include: [Choice], 
-          },
-        ],
+        where: { languageId },
       });
+      if (!lessons || lessons.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No lessons found for this language." });
+      }
       res.status(200).json(lessons);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   },
 
-  getById: async (req, res) => {
+  // Get a lesson by ID and languageId (useful if verifying language context is needed)
+  async getLessonByIdAndLanguageId(req, res) {
     try {
-      const lesson = await Lesson.findByPk(req.params.id);
+      const { lessonId, languageId } = req.params;
+      const lesson = await Lesson.findOne({
+        where: { id: lessonId, languageId },
+      });
       if (!lesson) {
-        return res.status(404).json({ message: 'Lesson not found' });
+        return res
+          .status(404)
+          .json({ message: "Lesson not found for this language." });
       }
       res.status(200).json(lesson);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   },
-
-  update: async (req, res) => {
+  // Get the next lesson for the user (useful for progression-based unlocking of lessons)
+  async getNextLesson(req, res) {
     try {
-      const [updated] = await Lesson.update(req.body, {
-        where: { id: req.params.id },
+      const { languageId, userId } = req.params;
+
+      // Assuming UserProgress tracks completed lessons and lessonId is stored
+      const lastCompletedLesson = await UserProgress.findOne({
+        where: { userId, languageId },
       });
-      if (!updated) {
-        return res.status(404).json({ message: 'Lesson not found' });
+
+      const nextLesson = await Lesson.findOne({
+        where: {
+          languageId,
+          id: {
+            [Op.gt]: lastCompletedLesson ? lastCompletedLesson.lessonId : 0,
+          },
+        },
+      });
+
+      if (!nextLesson) {
+        return res.status(404).json({ message: "No more lessons available." });
       }
-      const updatedLesson = await Lesson.findByPk(req.params.id);
-      res.status(200).json(updatedLesson);
+
+      res.status(200).json(nextLesson);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   },
+  async getUserProgressInLanguage(req, res) {
+    const { userId, languageId } = req.params;
 
-  delete: async (req, res) => {
     try {
-      const deleted = await Lesson.destroy({
-        where: { id: req.params.id },
+      // Chercher la progression de l'utilisateur dans la langue
+      const lessonsProgress = await LessonsUsers.findAll({
+        where: { userId },
+        include: [
+          {
+            model: Lesson,
+
+            include: [Language],
+          },
+        ],
       });
-      if (!deleted) {
-        return res.status(404).json({ message: 'Lesson not found' });
+
+      // Si aucune progression n'est trouvée
+      if (lessonsProgress.length === 0) {
+        // Récupérer la première leçon de la langue
+        const firstLesson = await Lesson.findOne({
+          where: { languageId },
+        });
+
+        if (firstLesson) {
+          // Créer une nouvelle progression pour la première leçon
+          const newProgress = await LessonsUsers.create({
+            userId,
+            lessonId: firstLesson.id,
+            isCompleted: false,
+            isActive: true,
+            progress: 0, // Débuter à 0%
+          });
+
+          // Retourner la nouvelle progression avec la première leçon
+          return res.status(200).json([newProgress]);
+        } else {
+          // Si aucune leçon n'est trouvée pour cette langue
+          return res.status(404).json({
+            message: "Aucune leçon trouvée pour cette langue.",
+          });
+        }
       }
-      res.status(204).send();
+
+      // Si des progressions existent, les retourner
+      res.status(200).json(lessonsProgress);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

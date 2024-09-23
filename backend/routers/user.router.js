@@ -1,28 +1,40 @@
+// Import necessary modules
 const express = require("express");
 const UserRouter = express.Router();
 const upload = require("../config/multerConfig");
-const authenticate = require("../middleware/index");
+const { authenticate } = require("../middleware/index");
 
+// Import controller functions
 const {
   userLogin,
   userSignup,
   updateUserProfile,
   updateUserPassword,
-  createUser,
-  getAllUsers,
-  // getUserProfile,
   getCurrentUser,
   getUserPointsById,
 } = require("../controllers/user.controller");
 
+//* Routes for user authentication
+// User registration with profile picture
 UserRouter.post("/register", upload.single("profilePicture"), userSignup);
+// User login
 UserRouter.post("/login", userLogin);
-UserRouter.put("/update/:id", authenticate, updateUserProfile);
-UserRouter.put("/update-password/:id", authenticate, updateUserPassword);
-UserRouter.post("/create", createUser);
-UserRouter.get("/all", getAllUsers);
-// UserRouter.get("/:id", getUserProfile);
+
+//* Routes for authenticated users
+// Get current user info
 UserRouter.get("/me", authenticate, getCurrentUser);
+// Update user profile
+UserRouter.put(
+  "/me/profile",
+  authenticate,
+  upload.single("profilePicture"),
+  updateUserProfile
+);
+// Update user password
+UserRouter.put("/me/password", authenticate, updateUserPassword);
+
+//* Other routes
+// Get user points by ID
 UserRouter.get("/points/:id", getUserPointsById);
 
 module.exports = UserRouter;

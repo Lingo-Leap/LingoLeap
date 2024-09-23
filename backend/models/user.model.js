@@ -26,6 +26,7 @@ const User = sequelize.define("User", {
   profilePicture: {
     type: DataTypes.STRING,
     allowNull: true,
+    defaultValue: "https://cdn-icons-png.flaticon.com/512/4775/4775505.png",
   },
   totalPoints: {
     type: DataTypes.INTEGER,

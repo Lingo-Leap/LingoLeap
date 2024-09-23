@@ -48,12 +48,13 @@ LessonsUsers.belongsTo(User, { foreignKey: "userId" });
 
 Lesson.hasMany(LessonsUsers, { foreignKey: "lessonId" });
 LessonsUsers.belongsTo(Lesson, { foreignKey: "lessonId" });
+
 // sequelize.drop().then(() => {
 //   console.log("All models were synchronized successfully.");
 // });
 
 // sequelize
-//   .sync({ force: false })
+//   .sync({ force: false, alter: true })
 //   .then(() => {
 //     console.log("All models were synchronized successfully.");
 //   })
@@ -65,7 +66,7 @@ LessonsUsers.belongsTo(Lesson, { foreignKey: "lessonId" });
 // const languageFaker = require("./faker/language").up(Language, sequelize);
 // const lessonFaker = require("./faker/lesson").up(Lesson, sequelize);
 // const questionFaker = require("./faker/question").up(Question, sequelize);
-// const choiceFaker = require("./faker/choice").up(Choice, sequelize);
+
 // const achievementFaker = require("./faker/acheivement").up(
 //   Achievement,
 //   sequelize
@@ -77,6 +78,7 @@ module.exports = {
   Language,
   Achievement,
   UserAchievement,
+  LessonsUsers,
   Progress,
   Question,
   Choice,

@@ -1,23 +1,25 @@
-const express = require('express');
-const lessonsController = require('../controllers/lesson.controller'); 
+const express = require("express");
+const lessonController = require("../controllers/lesson.controller");
 
-const lessonsRouter = express.Router();
+const router = express.Router();
 
+// Get all lessons by language ID
+router.get("/language/:languageId", lessonController.getLessonsByLanguageId);
 
- lessonsRouter.post('/post', lessonsController.create);
+// Get a specific lesson by ID and language ID
+router.get(
+  "/:lessonId/language/:languageId",
+  lessonController.getLessonByIdAndLanguageId
+);
 
- lessonsRouter.get('/get', lessonsController.getAll);
-
-
- lessonsRouter.get('/:id', lessonsController.getById);
-
-
- lessonsRouter.put('/:id', lessonsController.update);
-
-
- lessonsRouter.delete('/:id', lessonsController.delete);
-
-module.exports =  lessonsRouter;
-
-
-
+// Get the next lesson for the user (user progression)
+router.get(
+  "/next/:userId/language/:languageId",
+  lessonController.getNextLesson
+);
+// Route pour récupérer la progression de l'utilisateur dans une langue
+router.get(
+  "/user/:userId/language/:languageId/progress",
+  lessonController.getUserProgressInLanguage
+);
+module.exports = router;
