@@ -45,6 +45,26 @@ app.use("/api/lessons", lessonsRouter);
 app.use("/api/question", questionRouter);
 app.use("/api/choices", choiceRouter);
 app.use("/api/lessonsUsers", lessonsUserRouter);
+app.use("/api", textToSpeechRoutes);
+app.post("/api/lessonsUsers/post", (req, res) => {
+  const { userId, lessonId, isActive, progress, isCompleted } = req.body;
+
+  // Validate the request data
+  if (
+    !userId ||
+    !lessonId ||
+    typeof isActive !== "boolean" ||
+    typeof progress !== "number" ||
+    typeof isCompleted !== "boolean"
+  ) {
+    return res.status(400).json({ message: "Invalid request data" });
+  }
+
+  // Process the request
+  // ...
+
+  res.status(200).json({ message: "Data posted successfully" });
+});
 app.use("/api/sound", textToSpeechRoutes);
 app.listen(port, () => {
   console.log(`Server running on port  http://localhost:${port}`);

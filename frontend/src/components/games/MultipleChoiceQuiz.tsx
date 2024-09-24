@@ -2,9 +2,10 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
 import { useDispatch } from "react-redux";
+import { incrementEnergy, incrementProgressPercentage } from "../../redux/actions/gameActions";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDecodeToken } from "../../hooks/useDecode";
-import { incrementEnergy } from "../../redux/actions/gameActions";
+
 import {
   buttonStyles,
   containerStyles,
@@ -74,12 +75,14 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
   const handleValidate = async () => {
     if (selectedWord === questions.answer) {
       setIsCorrect(true);
+      // dispatch(incrementEnergy(10));
+      dispatch(incrementProgressPercentage(10));
       setShowPopup("won");
       dispatch(incrementEnergy(10));
       if (userId && stageId) {
         try {
           const response = await axios.post(
-            `http://localhost:1274/api/lessonsUsers/post`,
+            `http://localhost:1274/api/lessonsUsers/post `,
             {
               userId,
               lessonId: Number(stageId),
