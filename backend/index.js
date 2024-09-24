@@ -65,6 +65,7 @@ app.post("/api/lessonsUsers/post", (req, res) => {
 
   res.status(200).json({ message: "Data posted successfully" });
 });
+app.use("/api/sound", textToSpeechRoutes);
 app.listen(port, () => {
   console.log(`Server running on port  http://localhost:${port}`);
 });

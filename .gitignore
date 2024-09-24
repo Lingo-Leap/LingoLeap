@@ -16,6 +16,7 @@ public/build/
 # Uploads or storage directories
 uploads/
 storage/
+sounds/
 
 # Log files
 npm-debug.log*

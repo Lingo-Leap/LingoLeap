@@ -11,9 +11,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import { store } from "./redux/store/store";
 
-// Global styles
-import "./App.css";
-
 // Component Imports
 import GameBar from "./components/games/GameBar";
 import Navbar from "./components/layout/Navbar";
@@ -22,10 +19,11 @@ import Navbar from "./components/layout/Navbar";
 import { ROUTES } from "./config/routesConfig"; // Import ROUTES array
 import { RouteConfig } from "./types/RouteConfig";
 
+//cashing systeme
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 // ==============================
 // Component Definitions
 // ==============================
-
 /**
  * GameWrapper Component
  * Wraps game-related components with the GameBar.
