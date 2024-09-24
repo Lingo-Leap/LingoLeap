@@ -4,7 +4,7 @@ import { FiVolume2 } from "react-icons/fi";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDecodeToken } from "../../hooks/useDecode";
 import { useDispatch } from "react-redux";
-import { incrementEnergy } from "../../redux/actions/gameActions";
+import { incrementEnergy, incrementProgressPercentage } from "../../redux/actions/gameActions";
 import {
   buttonStyles,
   containerStyles,
@@ -72,13 +72,14 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
   const handleValidate = async () => {
     if (selectedWord === questions.answer) {
       setIsCorrect(true);
+      // dispatch(incrementEnergy(10));
+      dispatch(incrementProgressPercentage(10));
       setShowPopup("won");
       console.log("Bonne réponse, vous avez gagné !");
-      dispatch(incrementEnergy(10));
       // Vérifier les données avant l'envoi
       console.log("Données envoyées :", {
         userId,
-        lessonId: Number(stageId),
+        lessonId: stageId,
         isActive: true,
         progress: 100,
         isCompleted: true,
@@ -87,10 +88,10 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
       if (userId && stageId) {
         try {
           const response = await axios.post(
-            `http://localhost:1274/api/lessonsUsers/post`,
+            `http://localhost:1274/api/lessonsUsers/post `,
             {
               userId: userId,
-              lessonId: Number(stageId), // stage correspond au lessonId
+              lessonId: stageId, // stage correspond au lessonId
               isActive: true,
               progress: 100, // Puisqu'il a gagné, le progrès est à 100%
               isCompleted: true,

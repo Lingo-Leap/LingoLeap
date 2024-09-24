@@ -5,7 +5,7 @@ import { ReactComponent as Closed } from "../../assets/icons/closed.svg";
 import { useDecodeToken } from "../../hooks/useDecode";
 import { containerStyles, typographyStyles } from "../../styles/styles";
 import { Lesson } from "../../types/Game";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 
 
 const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
