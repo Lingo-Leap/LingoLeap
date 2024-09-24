@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
-import { useParams, useNavigate } from "react-router-dom";
-import { useDecodeToken } from "../../hooks/useDecode";
 import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDecodeToken } from "../../hooks/useDecode";
 import { incrementEnergy } from "../../redux/actions/gameActions";
 import {
   buttonStyles,
@@ -19,7 +19,7 @@ interface QuizProps {
   };
 }
 
-const QuizExample: React.FC<QuizProps> = ({ questions }) => {
+const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
   const { languageId, stageId } = useParams();
   const navigate = useNavigate();
   const decodedToken = useDecodeToken();
@@ -244,4 +244,4 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
   );
 };
 
-export default QuizExample;
+export default MultipleChoiceQuiz;
