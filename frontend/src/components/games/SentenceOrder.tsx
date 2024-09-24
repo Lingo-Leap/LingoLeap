@@ -1,12 +1,13 @@
+// ==============================
+// Importing React, Hooks, and Libraries
+// ==============================
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FiVolume2 } from "react-icons/fi";
-import { decrementLives
- } from "../../redux/actions/gameActions";
-
- import { useDispatch } from "react-redux";
+import { FiVolume2 } from "react-icons/fi"; // Sound icon
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDecodeToken } from "../../hooks/useDecode";
+import { decrementLives } from "../../redux/actions/gameActions";
 import {
   buttonStyles,
   containerStyles,
@@ -14,7 +15,7 @@ import {
 } from "../../styles/styles";
 import { SentenceOrderProps } from "../../types/Game";
 
-// Utility function to shuffle an array
+// Utility function to shuffle an array of words
 const shuffleArray = (array: string[]) => {
   return array
     .map((word) => ({ word, sort: Math.random() }))
@@ -27,20 +28,23 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   scrambled,
   language,
 }) => {
-  const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
+  // URL parameters and navigation
+  const { stageId, languageId } = useParams(); // Get the stage and language ID from the URL
+  const navigate = useNavigate(); // For navigating between stages
 
-  const { stageId, languageId } = useParams(); // Get the stage ID from the URL
-  const navigate = useNavigate(); // Use navigate to go to the next stage
   const decodedToken = useDecodeToken();
-  const userId = decodedToken ? decodedToken.id : null; // Get the user ID from the token
-  const dispatch = useDispatch(); // Use dispatch to
-  const [sentenceOrder, setSentenceOrder] = useState<string[]>([]);
-  const [availableWords, setAvailableWords] = useState<string[]>([]);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(15);
-  const [isTimeUp, setIsTimeUp] = useState(false);
-  const [showPopup, setShowPopup] = useState<string | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null); // URL for the audio file
+  const userId = decodedToken ? decodedToken.id : null; // Get user ID from the decoded token
+
+  const dispatch = useDispatch(); // To dispatch actions like decrementing lives
+
+  // State management
+  const [sentenceOrder, setSentenceOrder] = useState<string[]>([]); // To keep track of the selected words in order
+  const [availableWords, setAvailableWords] = useState<string[]>([]); // The words available for selection
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Track if the sentence is correct
+  const [timeLeft, setTimeLeft] = useState(15); // Timer for the quiz
+  const [isTimeUp, setIsTimeUp] = useState(false); // Flag for when time is up
+  const [showPopup, setShowPopup] = useState<string | null>(null); // To show win/loss popups
+  const [audioUrl, setAudioUrl] = useState<string | null>(null); // URL for the audio file (text-to-speech)
 
   // Shuffle words on component mount
   useEffect(() => {
@@ -53,17 +57,17 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
       const timer = setInterval(() => {
         setTimeLeft((prevTime) => {
           if (prevTime <= 1) {
-            clearInterval(timer); // Clear the timer if we're about to go to zero
+            clearInterval(timer);
             setIsTimeUp(true);
             setShowPopup("lost");
-            dispatch(decrementLives()); // Decrement lives
-            return 0; // Set timeLeft to zero
+            dispatch(decrementLives());
+            return 0;
           }
-          return prevTime - 1; // Decrease time left
+          return prevTime - 1;
         });
       }, 1000);
-      
-      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
+
+      return () => clearInterval(timer); // Clear the interval when unmounted
     }
   }, [timeLeft, showPopup, dispatch]);
 
@@ -93,22 +97,20 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
             {
               userId,
               lessonId: Number(stageId),
-              isActive: true,
               progress: 100,
               isCompleted: true,
             }
           );
-          console.log("Data posted successfully: ", response.data);
+          console.log("Progress saved successfully: ", response.data);
         } catch (error) {
-          console.error("Error posting data: ", error);
+          console.error("Error saving progress: ", error);
         }
       }
     } else {
       setIsCorrect(false);
-      setIncorrectCount(incorrectCount + 1); // Incrémenter le compteur de mauvaises réponses
-      dispatch(decrementLives()); // Décrémenter les vies
-      setShowPopup("lost"); // Afficher le popup de défaite
-      console.log("Réponse incorrecte");
+      dispatch(decrementLives()); // Decrease lives on incorrect answer
+      setShowPopup("lost");
+      console.log("Incorrect answer.");
     }
   };
 
@@ -149,15 +151,17 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
     navigate(`/language/${languageId}/stages/${nextStageId}/play`);
   };
 
+  // Go back to the previous screen
   const handleBack = () => {
     navigate(-1);
   };
 
-  // Progress bar width
+  // Calculate the width of the progress bar based on remaining time
   const progressBarWidth = (timeLeft / 15) * 100;
 
   return (
     <div className="flex flex-col items-center justify-center text-white">
+      {/* Progress Bar */}
       <div className="w-full max-w-xl bg-gray-700 rounded-full h-2.5 my-4">
         <div
           className="bg-green-500 h-2.5 rounded-full"
@@ -167,6 +171,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
 
       <div className="mb-4 text-lg">{timeLeft} seconds remaining</div>
 
+      {/* Sentence Formation */}
       <div className={`${containerStyles.card} flex flex-col items-center`}>
         <div className="flex items-center mb-4">
           <h2 className={`${typographyStyles.heading2} mr-4`}>
@@ -180,6 +185,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           </button>
         </div>
 
+        {/* Selected words forming the sentence */}
         <div className="flex flex-col items-center">
           <div className="w-full py-2 mb-6 text-center border-b-2 border-gray-500">
             {sentenceOrder.length > 0
@@ -187,7 +193,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
               : "Click on a word to form a sentence"}
           </div>
 
-          {/* Message de feedback */}
+          {/* Feedback message after validation */}
           {isCorrect !== null && (
             <div
               className={`text-lg font-semibold mb-4 ${
@@ -199,6 +205,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           )}
         </div>
 
+        {/* Available words for selection */}
         <div className="flex flex-wrap gap-2 mb-6">
           {availableWords.map((word, index) => (
             <button
@@ -211,6 +218,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           ))}
         </div>
 
+        {/* Back and Validate buttons */}
         <div className="flex justify-between w-full mt-6">
           <button
             className={`${buttonStyles.secondary} px-6 py-2`}
@@ -228,6 +236,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         </div>
       </div>
 
+      {/* Popup for win scenario */}
       {showPopup === "won" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
@@ -245,6 +254,7 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         </div>
       )}
 
+      {/* Popup for loss scenario */}
       {showPopup === "lost" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">

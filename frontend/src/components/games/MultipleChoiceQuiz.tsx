@@ -1,19 +1,32 @@
+// ==============================
+// Importing External Libraries and Hooks
+// ==============================
 import axios from "axios"; // For making POST requests
-import { useDispatch, useSelector } from "react-redux"; 
-import { decrementLives, setExtraLives, incrementEnergy } from "../../redux/actions/gameActions";
 import React, { useEffect, useState } from "react";
-import { FiVolume2 } from "react-icons/fi";
-import { useDispatch } from "react-redux";
-import { incrementEnergy, incrementProgressPercentage } from "../../redux/actions/gameActions";
+import { FiVolume2 } from "react-icons/fi"; // For sound icon
 import { useNavigate, useParams } from "react-router-dom";
+
+// Redux
+import { useDispatch } from "react-redux";
+import {
+  decrementLives,
+  incrementEnergy,
+  incrementProgressPercentage,
+} from "../../redux/actions/gameActions";
+
+// Custom Hooks
 import { useDecodeToken } from "../../hooks/useDecode";
 
+// Styles
 import {
   buttonStyles,
   containerStyles,
   typographyStyles,
 } from "../../styles/styles";
 
+// ==============================
+// Component Props Interface
+// ==============================
 interface QuizProps {
   questions: {
     question: string;
@@ -23,88 +36,101 @@ interface QuizProps {
 }
 
 const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
+  // URL parameters and navigation
   const { languageId, stageId } = useParams();
   const navigate = useNavigate();
   const decodedToken = useDecodeToken();
-  const userId = decodedToken ? decodedToken.id : null;
-  const [selectedWord, setSelectedWord] = useState<string | null>(null);
-  const [availableWords, setAvailableWords] = useState([...questions.options]);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(15);
-  const [isTimeUp, setIsTimeUp] = useState(false);
-  const [incorrectCount, setIncorrectCount] = useState(0);
-  const [showPopup, setShowPopup] = useState<string | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null); // URL for the audio file
+  const userId = decodedToken ? decodedToken.id : null; // Get user ID from token
 
-  const dispatch = useDispatch();
+  // ==============================
+  // State Management
+  // ==============================
+  const [selectedWord, setSelectedWord] = useState<string | null>(null); // The selected word
+  const [availableWords, setAvailableWords] = useState([...questions.options]); // Available options
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); // Check if the selected answer is correct
+  const [timeLeft, setTimeLeft] = useState(15); // Timer for the quiz
+  const [isTimeUp, setIsTimeUp] = useState(false); // Flag for when the time is up
+  const [incorrectCount, setIncorrectCount] = useState(0); // Counter for incorrect attempts
+  const [showPopup, setShowPopup] = useState<string | null>(null); // Show win/lose popup
+  const [audioUrl, setAudioUrl] = useState<string | null>(null); // Audio URL for text-to-speech
 
-  // Set up timer
+  const dispatch = useDispatch(); // For dispatching Redux actions
+
+  // ==============================
+  // Timer Effect
+  // ==============================
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
         setTimeLeft((prevTime) => {
           if (prevTime <= 1) {
-            clearInterval(timer); // Clear the timer if we're about to go to zero
+            clearInterval(timer); // Clear the timer when it reaches zero
             setIsTimeUp(true);
             setShowPopup("lost");
             dispatch(decrementLives()); // Decrement lives
-            return 0; // Set timeLeft to zero
+            return 0;
           }
           return prevTime - 1; // Decrease time left
         });
       }, 1000);
-      
-      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
+
+      return () => clearInterval(timer); // Clear the interval on unmount
     }
   }, [timeLeft, showPopup, dispatch]);
-  
+
+  // ==============================
+  // Handle Word Selection
+  // ==============================
   const handleWordClick = (word: string) => {
-    if (selectedWord === word) return;
-    setSelectedWord(word);
+    if (selectedWord === word) return; // If the same word is clicked, do nothing
+    setSelectedWord(word); // Set the clicked word as selected
     if (!selectedWord) {
-      setAvailableWords(availableWords.filter((w) => w !== word));
+      setAvailableWords(availableWords.filter((w) => w !== word)); // Remove the selected word from available words
     } else {
       setAvailableWords(
         availableWords.map((w) => (w === word ? selectedWord : w))
-      );
-      setSelectedWord(word);
+      ); // Swap the selected word
     }
   };
 
+  // ==============================
+  // Reset Quiz State
+  // ==============================
   const handleReset = () => {
     setSelectedWord(null);
-    setAvailableWords([...questions.options]);
+    setAvailableWords([...questions.options]); // Reset available words
     setIsCorrect(null);
-    setTimeLeft(15);
+    setTimeLeft(15); // Reset timer
     setIsTimeUp(false);
     setIncorrectCount(0);
     setShowPopup(null);
   };
 
+  // ==============================
+  // Validate Answer
+  // ==============================
   const handleValidate = async () => {
     if (selectedWord === questions.answer) {
       setIsCorrect(true);
-      // dispatch(incrementEnergy(10));
       dispatch(incrementProgressPercentage(10));
       setShowPopup("won");
       dispatch(incrementEnergy(10));
 
-      // Check user data before posting
+      // Post progress data if user and stage IDs are available
       if (userId && stageId) {
         try {
           const response = await axios.post(
-            `http://localhost:1274/api/lessonsUsers/post `,
+            `http://localhost:1274/api/lessonsUsers/post`,
             {
               userId,
               lessonId: Number(stageId),
-              isActive: true,
               progress: 100,
               isCompleted: true,
             }
           );
-          console.log("Data successfully posted: ", response.data);
-        } catch (error: any) {
-          console.error("Error posting data: ", error);
+          console.log("Data successfully posted: ", response.data); // <-- Log response
+        } catch (error) {
+          console.error("Error posting data: ", error); // <-- Log error
         }
       }
     } else {
@@ -114,13 +140,14 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
     }
   };
 
+  // ==============================
+  // Handle Text-to-Speech API Call
+  // ==============================
   const handleTextToSpeech = async () => {
     try {
       const response = await axios.post(
         "http://localhost:1274/api/sound/text-to-speech",
-        {
-          text: questions.question,
-        }
+        { text: questions.question }
       );
 
       const { url } = response.data;
@@ -134,19 +161,25 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
     }
   };
 
+  // ==============================
+  // Calculate Progress Bar Width Based on Remaining Time
+  // ==============================
   const progressBarWidth = (timeLeft / 15) * 100;
 
+  // Navigate to the next stage
   const handleNextStage = () => {
     const nextStageId = Number(stageId) + 1;
     navigate(`/language/${languageId}/stages/${nextStageId}/play`);
   };
 
+  // Go back to the previous screen
   const handleBack = () => {
     navigate(-1);
   };
 
   return (
     <div className="flex flex-col items-center justify-center text-white">
+      {/* Progress Bar */}
       <div className="w-full max-w-xl bg-gray-700 rounded-full h-2.5 my-4">
         <div
           className="bg-green-500 h-2.5 rounded-full"
@@ -156,6 +189,7 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
 
       <div className="mb-4 text-lg">{timeLeft} seconds remaining.</div>
 
+      {/* Question and Text-to-Speech */}
       <div className={`${containerStyles.card} flex flex-col items-center`}>
         <div className="flex items-center mb-4">
           <h2 className={`${typographyStyles.heading2} mr-4`}>
@@ -169,12 +203,14 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
           </button>
         </div>
 
+        {/* Selected Word */}
         <div className="flex flex-col items-center">
           <div className="w-full py-2 mb-6 text-center border-b-2 border-gray-500">
             {selectedWord ? selectedWord : "Click on a word to answer"}
           </div>
         </div>
 
+        {/* Available Words */}
         <div className="flex flex-wrap gap-2 mb-6">
           {availableWords.map((word, index) => (
             <button
@@ -189,6 +225,7 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
           ))}
         </div>
 
+        {/* Feedback and Action Buttons */}
         {isTimeUp ? (
           <div className="mb-4 text-lg font-semibold text-red-500">
             Time's up! You lost.
@@ -224,6 +261,7 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
         )}
       </div>
 
+      {/* Win Popup */}
       {showPopup === "won" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
@@ -241,6 +279,7 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
         </div>
       )}
 
+      {/* Loss Popup */}
       {showPopup === "lost" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">

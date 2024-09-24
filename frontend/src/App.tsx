@@ -12,7 +12,6 @@ import { useAuth } from "./hooks/useAuth";
 import { store } from "./redux/store/store";
 import useTimer from "./hooks/useTimer";
 
-
 // Component Imports
 import GameBar from "./components/games/GameBar";
 import Navbar from "./components/layout/Navbar";
@@ -22,7 +21,7 @@ import { ROUTES } from "./config/routesConfig"; // Import ROUTES array
 import { RouteConfig } from "./types/RouteConfig";
 
 //cashing systeme
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+// import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 // ==============================
 // Component Definitions
 // ==============================

@@ -1,12 +1,12 @@
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
+import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import {
-  StaleWhileRevalidate,
-  NetworkFirst,
   CacheFirst,
+  NetworkFirst,
+  StaleWhileRevalidate,
 } from "workbox-strategies";
-import { CacheableResponsePlugin } from "workbox-cacheable-response";
-import { ExpirationPlugin } from "workbox-expiration";
 
 // Met en cache les fichiers statiques générés lors du build (HTML, JS, CSS, images)
 precacheAndRoute(self.__WB_MANIFEST);
@@ -28,7 +28,7 @@ registerRoute(
   })
 );
 
-// Utilise NetworkFirst pour les documents HTML pour permettre un cache offline
+// Utilise NetworkFirst pour les documents HTML pour permettre un cache hors-ligne
 registerRoute(
   ({ request }) => request.destination === "document",
   new NetworkFirst({
@@ -41,18 +41,35 @@ registerRoute(
   })
 );
 
-// Utilise NetworkFirst pour les appels API afin de garder les données récentes mais avec un fallback en cache
+// Utilise NetworkFirst pour tous les appels API afin de garder les données récentes avec un fallback en cache
 registerRoute(
-  ({ url }) => url.pathname.startsWith("/api/"), // Cible les requêtes API (modifier selon le chemin de ton API)
+  ({ url }) => url.pathname.startsWith("/api/"), // Modifie selon le chemin de tes API
   new NetworkFirst({
     cacheName: "api-cache",
     plugins: [
       new CacheableResponsePlugin({
-        statuses: [0, 200],
+        statuses: [0, 200], // Seules les réponses avec un statut 0 ou 200 seront mises en cache
       }),
       new ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 5 * 60,
+        maxEntries: 50, // Limite à 50 réponses d'API mises en cache
+        maxAgeSeconds: 5 * 60, // Les réponses API seront gardées en cache pendant 5 minutes
+      }),
+    ],
+  })
+);
+
+// Utilise CacheFirst pour les appels API si tu veux prioriser les données en cache, et utiliser le réseau en fallback
+registerRoute(
+  ({ url }) => url.pathname.startsWith("/api/"), // Modifie selon le chemin de tes API
+  new CacheFirst({
+    cacheName: "api-cache",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200], // Seules les réponses avec un statut 0 ou 200 seront mises en cache
+      }),
+      new ExpirationPlugin({
+        maxEntries: 50, // Limite à 50 réponses d'API en cache
+        maxAgeSeconds: 5 * 60, // Les réponses API seront gardées en cache pendant 5 minutes
       }),
     ],
   })

@@ -2,11 +2,6 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/config");
 
 const LessonsUsers = sequelize.define("LessonsUsers", {
-  isActive: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
   progress: {
     type: DataTypes.INTEGER,
     allowNull: false,

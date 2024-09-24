@@ -113,26 +113,18 @@ module.exports = {
     }
   },
 
-
-
- 
- 
-  
-  
   async getLessonsCountByLanguageId(req, res) {
     try {
       const { languageId } = req.params;
-  
+
       // Count the number of lessons with the given languageId
       const count = await Lesson.count({
         where: { languageId },
       });
-  
+
       res.status(200).json({ count });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
-  
-
+  },
 };

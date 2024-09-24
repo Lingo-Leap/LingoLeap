@@ -68,6 +68,7 @@ const Achievements: React.FC = () => {
         axios
           .get(lessonUrl)
           .then((response) => setLessonData(response.data))
+
           .catch((error) =>
             console.error("Error fetching lesson data:", error)
           );
@@ -76,11 +77,11 @@ const Achievements: React.FC = () => {
         axios
           .get(pointsUrl)
           .then((response) => {
-            console.log(response.data)
-            if(response.data.totalPoints === null){
-              setPoints(0)
-            }else{
-            setPoints(response.data.totalPoints)
+            console.log(response.data);
+            if (response.data.totalPoints === null) {
+              setPoints(0);
+            } else {
+              setPoints(response.data.totalPoints);
             }
           })
           .catch((error) => console.error("Error fetching points data:", error))
