@@ -36,14 +36,21 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer); // Clear the timer if we're about to go to zero
+            setIsTimeUp(true);
+            setShowPopup("lost");
+            dispatch(decrementLives()); // Decrement lives
+            return 0; // Set timeLeft to zero
+          }
+          return prevTime - 1; // Decrease time left
+        });
       }, 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0) {
-      setIsTimeUp(true);
-      setShowPopup("lost");
+      
+      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
     }
-  }, [timeLeft, showPopup]);
+  }, [timeLeft, showPopup, dispatch]);
 
   const handleWordSelection = (word: string) => {
     if (!sentenceOrder.includes(word)) {
@@ -110,12 +117,12 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         />
       </div>
 
-      <div className="mb-4 text-lg">{timeLeft} secondes restantes</div>
+      <div className="mb-4 text-lg">{timeLeft} seconds remaining.</div>
 
       <div className={`${containerStyles.card} flex flex-col items-center`}>
         <div className="flex items-center mb-4">
           <h2 className={`${typographyStyles.heading2} mr-4`}>
-            Réorganisez la phrase :
+            Reorganize the phrase:
           </h2>
           <button className="p-2 rounded-full text-duolingoBlue">
             <FiVolume2 className="text-2xl" />
@@ -173,13 +180,13 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
       {showPopup === "won" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-green-500">Félicitations !</h2>
-            <p>Vous avez réorganisé correctement la phrase !</p>
+            <h2 className="text-2xl font-bold text-green-500">Congratulations !</h2>
+            <p>You have reorganized the phrase correctly !</p>
             <button
               className={`${buttonStyles.primary} mt-4`}
               onClick={handleNextStage}
             >
-              Suivant
+              Next Level
             </button>
           </div>
         </div>

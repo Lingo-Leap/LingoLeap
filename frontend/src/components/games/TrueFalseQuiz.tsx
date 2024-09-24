@@ -5,12 +5,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TrueFalseQuizProps } from "../../types/Game";
+import { useDispatch } from "react-redux";
+import { decrementLives } from "../../redux/actions/gameActions";
 import axios from "axios";
 import { buttonStyles, containerStyles, typographyStyles } from "../../styles/styles"; // Imported styles
 
 const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
   const { languageId, stageId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(null);
@@ -22,15 +25,23 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
 
   // Timer for each question
   useEffect(() => {
-    if (timeLeft > 0 && !isTimeUp) {
+    if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer); // Clear the timer if we're about to go to zero
+            setIsTimeUp(true);
+            setShowPopup("lost");
+            dispatch(decrementLives()); // Decrement lives
+            return 0; // Set timeLeft to zero
+          }
+          return prevTime - 1; // Decrease time left
+        });
       }, 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0) {
-      handleTimeout();
+      
+      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
     }
-  }, [timeLeft, isTimeUp]);
+  }, [timeLeft, showPopup, dispatch]);
 
   const handleTimeout = () => {
     setIsTimeUp(true);
@@ -101,7 +112,7 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
       </div>
 
       {/* Timer Display */}
-      <div className="mb-4 text-lg">{timeLeft} secondes restantes</div>
+      <div className="mb-4 text-lg">{timeLeft} seconds remaining.</div>
 
       {/* Display feedback */}
       {feedbackVisible && (
@@ -110,12 +121,12 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
         </p>
       )}
 
-      {isTimeUp && <p>Temps écoulé ! Vous avez perdu.</p>}
+      {isTimeUp && <p>Time over! You've lost.</p>}
 
       {showPopup && (
         <div className={`popup ${showPopup === "won" ? "won" : "lost"} fixed inset-0 flex items-center justify-center bg-black bg-opacity-50`}>
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-green-500">{showPopup === "won" ? "Félicitations !" : "Désolé !"}</h2>
+            <h2 className="text-2xl font-bold text-green-500">{showPopup === "won" ? "Congratulations !" : "You lost! Try again!"}</h2>
             <p>{showPopup === "won" ? "Vous avez gagné !" : "Vous avez perdu."}</p>
           </div>
         </div>

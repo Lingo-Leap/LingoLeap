@@ -38,15 +38,22 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer); // Clear the timer if we're about to go to zero
+            setIsTimeUp(true);
+            setShowPopup("lost");
+            dispatch(decrementLives()); // Decrement lives
+            return 0; // Set timeLeft to zero
+          }
+          return prevTime - 1; // Decrease time left
+        });
       }, 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0) {
-      setIsTimeUp(true);
-      setShowPopup("lost");
+      
+      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
     }
-  }, [timeLeft, showPopup]);
-
+  }, [timeLeft, showPopup, dispatch]);
+  
   const handleWordClick = (word: string) => {
     if (selectedWord === word) return;
     setSelectedWord(word);
@@ -112,7 +119,7 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
         <div className="bg-green-500 h-2.5 rounded-full" style={{ width: `${progressBarWidth}%` }} />
       </div>
 
-      <div className="mb-4 text-lg">{timeLeft} secondes restantes</div>
+      <div className="mb-4 text-lg">{timeLeft} seconds remaining.</div>
 
       <div className={`${containerStyles.card} flex flex-col items-center`}>
         <div className="flex items-center mb-4">
@@ -141,18 +148,18 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
         </div>
 
         {isTimeUp ? (
-          <div className="mb-4 text-lg font-semibold text-red-500">Temps écoulé ! Vous avez perdu.</div>
+          <div className="mb-4 text-lg font-semibold text-red-500">Time over ! You've lost.</div>
         ) : (
           <>
             {isCorrect !== null && (
               <div className={`text-lg font-semibold mb-4 ${isCorrect ? "text-green-500" : "text-red-500"}`}>
-                {isCorrect ? "Correct!" : "Incorrect, réessayez."}
+                {isCorrect ? "Correct!" : "Incorrect, try again."}
               </div>
             )}
 
             <div className="flex justify-between w-full mt-6">
               <button className={`${buttonStyles.secondary} px-6 py-2`} onClick={handleReset}>
-                Passer
+                Skip
               </button>
               <button
                 className={`${buttonStyles.primary} px-6 py-2`}
@@ -169,10 +176,10 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
       {showPopup === "won" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-green-500">Félicitations !</h2>
-            <p>Vous avez gagné !</p>
+            <h2 className="text-2xl font-bold text-green-500">Congratulations !</h2>
+            <p>You won !</p>
             <button className={`${buttonStyles.primary} mt-4`} onClick={handleNextStage}>
-              Suivant
+              Next Level
             </button>
           </div>
         </div>
@@ -181,10 +188,11 @@ const QuizExample: React.FC<QuizProps> = ({ questions }) => {
       {showPopup === "lost" && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-red-500">Désolé !</h2>
-            <p>Vous avez perdu.</p>
+            <h2 className="text-2xl font-bold text-red-500">You lost!</h2>
+            <p>You've lost.</p>
+            
             <button className={`${buttonStyles.primary} mt-4`} onClick={handleReset}>
-              Rejouer
+              Restart
             </button>
           </div>
         </div>

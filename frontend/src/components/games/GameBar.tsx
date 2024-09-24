@@ -69,7 +69,7 @@ const GameBar: React.FC<GameBarProps> = ({ initialTimerValue }) => {
           </span>
           {lives < 5 && (
             <span className="text-red-500 font-bold">
-              {formatTime(timerValue)} remaining
+              {formatTime(timerValue)} 
             </span>
           )}
         </div>
