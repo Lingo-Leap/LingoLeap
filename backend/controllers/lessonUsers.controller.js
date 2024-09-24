@@ -5,11 +5,13 @@ const User = require("../models/user.model");
 module.exports = {
   // Create new
   async create(req, res) {
-    console.log(req.body);
+    console.log("Received POST data: ", req.body);
     try {
       const lessonsUsers = await LessonsUsers.create(req.body);
+      console.log("Created entry: ", lessonsUsers);
       res.status(201).json(lessonsUsers);
     } catch (error) {
+      console.error("Error creating LessonsUsers entry:", error);
       res.status(400).json({ error: error.message });
     }
   },
@@ -194,10 +196,8 @@ module.exports = {
     }
   },
 
-
-  
-  async countPointsByUserId  (req, res)  {
-    const {userId} = req.params 
+  async countPointsByUserId(req, res) {
+    const { userId } = req.params;
 
     try {
       const totalPoints = await LessonsUsers.sum("progress", {
@@ -210,8 +210,5 @@ module.exports = {
         .status(500)
         .json({ message: "Erreur lors du calcul des points", error });
     }
-
   },
-
- 
 };

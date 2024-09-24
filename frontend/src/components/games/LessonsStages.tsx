@@ -1,22 +1,27 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ReactComponent as Closed } from "../../assets/icons/closed.svg";
-import { useDecodeToken } from "../../hooks/useDecode";
+import { ReactComponent as LockedIcon } from "../../assets/icons/closed.svg"; // Icône de stage verrouillé
+import { useDecodeToken } from "../../hooks/useDecode"; // Décode le token utilisateur
 import { containerStyles, typographyStyles } from "../../styles/styles";
 import { Lesson } from "../../types/Game";
-// import { useDispatch } from "react-redux";
 
-
+// ==============================
+// Composant StageSelection
+// ==============================
 const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
+  // États pour les leçons, la progression et l'état de chargement
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [progressData, setProgressData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
   const navigate = useNavigate();
   const decodedToken = useDecodeToken();
   const userId = decodedToken ? decodedToken.id : null;
-  // const dispatch = useDispatch();
 
+  // ==============================
+  // Récupérer les leçons et la progression à la montée du composant
+  // ==============================
   useEffect(() => {
     const fetchLessonsAndProgress = async () => {
       const token = localStorage.getItem("token");
@@ -25,7 +30,7 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
         return;
       }
       try {
-        // Récupérer les leçons disponibles
+        // Récupérer les leçons disponibles pour la langue choisie
         const lessonResponse = await axios.get(
           `http://localhost:1274/api/lessons/language/${languageId}`,
           {
@@ -33,9 +38,8 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
           }
         );
         const lessonsData = lessonResponse.data;
-        setLessons(lessonsData);
 
-        // Récupérer la progression de l'utilisateur
+        // Récupérer la progression de l'utilisateur dans les leçons
         const progressResponse = await axios.get(
           `http://localhost:1274/api/lessons/user/${userId}/language/${languageId}/progress`,
           {
@@ -43,43 +47,80 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
           }
         );
         const progressData = progressResponse.data;
-        setProgressData(progressData); // Stocker les données de progression
 
-        setLoading(false);
+        // Trier les leçons en mettant les complétées en premier
+        const sortedLessons = sortLessonsByCompletion(
+          lessonsData,
+          progressData
+        );
+
+        setLessons(sortedLessons); // Stocker les leçons triées
+        setProgressData(progressData); // Stocker les données de progression
+        setLoading(false); // Désactiver l'état de chargement après la récupération
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
-        setLoading(false);
+        setLoading(false); // Désactiver l'état de chargement en cas d'erreur
       }
     };
 
     if (userId) {
-      fetchLessonsAndProgress();
+      fetchLessonsAndProgress(); // Récupérer les données lorsque l'utilisateur est identifié
     }
   }, [languageId, userId]);
 
+  // ==============================
+  // Fonction pour trier les leçons : complétées d'abord
+  // ==============================
+  const sortLessonsByCompletion = (lessons: Lesson[], progressData: any[]) => {
+    return lessons.sort((a, b) => {
+      const progressA = progressData.find((p) => p.lessonId === a.id);
+      const progressB = progressData.find((p) => p.lessonId === b.id);
+
+      const completedA = progressA?.isCompleted || false;
+      const completedB = progressB?.isCompleted || false;
+
+      // Les leçons complétées viennent avant celles non complétées
+      if (completedA && !completedB) return -1;
+      if (!completedA && completedB) return 1;
+
+      // Si les deux sont complétées ou non, conserver l'ordre initial
+      return 0;
+    });
+  };
+
+  // ==============================
+  // Naviguer vers le stage sélectionné
+  // ==============================
   const handleStageClick = (stageId: number) => {
     navigate(`/language/${languageId}/stages/${stageId}/play`);
   };
 
+  // ==============================
+  // Obtenir la progression d'un stage
+  // ==============================
   const getStageProgress = (lessonId: number) => {
     const stageProgress = progressData.find(
       (progress) => progress.lessonId === lessonId
     );
-    if (!stageProgress) return { isCompleted: false, progress: 0 };
-    return stageProgress;
+    if (!stageProgress) return { isCompleted: false, progress: 0 }; // Retourner les valeurs par défaut si aucune progression n'est trouvée
+    return stageProgress; // Retourner la progression trouvée
   };
 
-  const isStageUnlocked = (lessonId: number) => {
-    const lessonIndex = lessons.findIndex((lesson) => lesson.id === lessonId);
-    if (lessonIndex === 0) return true; // Le premier stage est toujours déverrouillé
-    const previousLessonId = lessons[lessonIndex - 1]?.id;
+  // ==============================
+  // Vérifier si un stage est débloqué
+  // ==============================
+  const isStageUnlocked = (lessonId: number, index: number) => {
+    if (index === 0) return true; // Le premier stage est toujours déverrouillé
+    const previousLessonId = lessons[index - 1]?.id;
     const previousLessonProgress = progressData.find(
       (progress) => progress.lessonId === previousLessonId
     );
-    return previousLessonProgress && previousLessonProgress.isCompleted;
+    return previousLessonProgress && previousLessonProgress.isCompleted; // Le stage est débloqué si le précédent est complété
   };
 
-
+  // ==============================
+  // Affichage du composant pendant le chargement
+  // ==============================
   if (loading) {
     return (
       <div className="text-center text-duolingoLight">
@@ -88,6 +129,9 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
     );
   }
 
+  // ==============================
+  // Rendu du composant de sélection des stages
+  // ==============================
   return (
     <div className={`${containerStyles.fullWidthCenter} p-4`}>
       <div className={containerStyles.card}>
@@ -97,8 +141,8 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
 
         <div className="grid grid-cols-2 gap-8 mt-8 md:grid-cols-4">
           {lessons.map((lesson, index) => {
-            const { isCompleted, progress } = getStageProgress(lesson.id);
-            const isUnlocked = isStageUnlocked(lesson.id);
+            const { isCompleted, progress } = getStageProgress(lesson.id); // Obtenir la progression de l'étape
+            const isUnlocked = isStageUnlocked(lesson.id, index); // Vérifier si le stage est débloqué
 
             return (
               <div
@@ -112,23 +156,14 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
                     ? "hover:scale-110 cursor-pointer"
                     : "opacity-70 hover:scale-105 cursor-not-allowed hover:opacity-50 "
                 }`}
-                onClick={() => isUnlocked && handleStageClick(lesson.id)}
+                onClick={() => isUnlocked && handleStageClick(lesson.id)} // Naviguer si le stage est débloqué
               >
                 {isCompleted ? (
                   <span className="text-2xl font-bold">✅</span> // Icône de stage complété
                 ) : isUnlocked ? (
-                  <span className="text-2xl font-bold">{index + 1}</span>
+                  <span className="text-2xl font-bold">{index + 1}</span> // Afficher le numéro de stage
                 ) : (
-                  <Closed className="h-16 " />
-                )}
-                {progress > 0 && !isCompleted && (
-                  <div className="absolute bottom-0 left-0 right-0 h-2 bg-gray-300">
-                    <div
-                      className="h-full bg-blue-500"
-                      style={{ width: `${progress}%` }}
-                    ></div>{" "}
-                    {/* Barre de progression */}
-                  </div>
+                  <LockedIcon className="h-16 " /> // Icône de stage verrouillé
                 )}
               </div>
             );

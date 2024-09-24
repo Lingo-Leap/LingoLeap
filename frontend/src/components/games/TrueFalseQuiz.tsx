@@ -4,11 +4,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi"; // Sound icon
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { decrementLives } from "../../redux/actions/gameActions";
 import { buttonStyles, typographyStyles } from "../../styles/styles"; // Imported styles
 import { TrueFalseQuizProps } from "../../types/Game";
-import { useDispatch } from "react-redux";
-import { decrementLives } from "../../redux/actions/gameActions";
 
 const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
   // URL Parameters
@@ -23,8 +23,8 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
   const [timeLeft, setTimeLeft] = useState(15);
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [showPopup, setShowPopup] = useState<string | null>(null);
-  const [userId, setUserId] = useState<number | null>(null); // Store user ID if needed
-  const [audioUrl, setAudioUrl] = useState<string | null>(null); // URL for the audio file
+  const [userId, setUserId] = useState<number | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   // Timer Management
   useEffect(() => {
@@ -32,17 +32,17 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
       const timer = setInterval(() => {
         setTimeLeft((prevTime) => {
           if (prevTime <= 1) {
-            clearInterval(timer); // Clear the timer if we're about to go to zero
+            clearInterval(timer);
             setIsTimeUp(true);
             setShowPopup("lost");
-            dispatch(decrementLives()); // Decrement lives
-            return 0; // Set timeLeft to zero
+            dispatch(decrementLives());
+            return 0;
           }
-          return prevTime - 1; // Decrease time left
+          return prevTime - 1;
         });
       }, 1000);
-      
-      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
+
+      return () => clearInterval(timer);
     }
   }, [timeLeft, showPopup, dispatch]);
 
@@ -73,10 +73,10 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
         await axios.post(`http://localhost:1274/api/lessonsUsers/post`, {
           userId,
           lessonId: Number(stageId),
-          isActive: true,
           progress: 100,
           isCompleted: true,
         });
+        console.log("Progress saved successfully");
       } catch (error) {
         console.error("Error saving progress: ", error);
       }
@@ -89,7 +89,7 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
       const response = await axios.post(
         "http://localhost:1274/api/sound/text-to-speech",
         {
-          text: questions[currentQuestion].statement, // Use the question statement for text-to-speech
+          text: questions[currentQuestion].statement,
         }
       );
 
@@ -176,9 +176,6 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
           False
         </button>
       </div>
-
-      {/* Timer Display */}
-      <div className="mb-4 text-lg">{timeLeft} seconds remaining.</div>
 
       {/* Display feedback */}
       {feedbackVisible && (
