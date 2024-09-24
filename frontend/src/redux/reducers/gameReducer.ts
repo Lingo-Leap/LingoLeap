@@ -13,6 +13,8 @@ import {
   resetTime,
   setExtraLives,
   setTime,
+  setProgressPercentage,
+  incrementProgressPercentage,  
 } from "../actions/gameActions";
 
 // ==============================
@@ -32,23 +34,25 @@ interface GameState {
   coins: number;
   extraLives: ExtraLives;
   time: number;
+  progressPercentage: number;
 }
 
 // ==============================
 // Initial State
 // ==============================
 const initialState: GameState = {
-  lives: 3,
+  lives: 5,
   maxLives: 5,
   energy: 0,
   maxEnergy: 100,
   coins: 1000,
   extraLives: {
-    current: 2,
+    current: 5,
     max: 5,
     timer: "00:00",
   },
   time: 0,
+  progressPercentage: 0,
 };
 
 // ==============================
@@ -83,7 +87,9 @@ const gameReducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(incrementEnergy, (state,action: PayloadAction<number>) => {
-        state.energy = Math.min(state.energy + action.payload, state.maxEnergy);
+      console.log("Incrementing energy by:", action.payload);
+        state.energy = action.payload;
+        console.log("New energy level:", state.energy);
     })
 
     // Coins reducers
@@ -95,6 +101,14 @@ const gameReducer = createReducer(initialState, (builder) => {
         state.coins -= action.payload;
       }
     })
+
+      // Progress Percentage reducers
+      .addCase(setProgressPercentage, (state, action: PayloadAction<number>) => {
+        state.progressPercentage = action.payload;
+      })
+      .addCase(incrementProgressPercentage, (state, action: PayloadAction<number>) => {
+        state.progressPercentage = Math.min(state.progressPercentage + action.payload, 100);
+      })
 
     // Extra Lives reducers
     .addCase(
@@ -109,6 +123,7 @@ const gameReducer = createReducer(initialState, (builder) => {
       state.extraLives.timer = "00:00";
     })
 
+  
 
 });
 

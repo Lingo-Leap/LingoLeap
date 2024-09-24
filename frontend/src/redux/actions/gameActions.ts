@@ -27,6 +27,9 @@ export const incrementProgress = createAction<number>("game/incrementProgress");
 export const addCoins = createAction<number>("game/addCoins");
 export const decrementCoins = createAction<number>("game/decrementCoins");
 
+// Progress Percentage actions
+export const setProgressPercentage = createAction<number>("game/setProgressPercentage");
+export const incrementProgressPercentage = createAction<number>("game/incrementProgressPercentage");
 // Extra Lives actions
 export const setExtraLives = createAction<{
   current: number;

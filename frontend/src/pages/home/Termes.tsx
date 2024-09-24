@@ -43,7 +43,7 @@ const TermsAndConditions: React.FC = () => {
         </h2>
 
         {/* Terms Content */}
-        <div className="mb-4 text-center text-gray-700">
+        <div className="mb-4 text-center" style={{ color: 'Silver' }}>
           <p>
             Welcome to Lingoleap! By accessing or using our services, you agree
             to be bound by these terms and conditions.

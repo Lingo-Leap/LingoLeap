@@ -115,45 +115,24 @@ module.exports = {
 
 
 
-  async getStagesCountByLesson(req, res) {
-    try {
-      const { lessonId } = req.params;
-      const lesson = await Lesson.findOne({ where: { id: lessonId } });
-
-      if (!lesson) {
-        return res.status(404).json({ message: "Lesson not found." });
-      }
-
-      // Assuming each lesson has a 'stages' field or related stages table
-      const totalStages = lesson.stages.length; // Adjust according to your model
-      res.status(200).json({ totalStages });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Check if all stages are completed
+ 
+ 
   
-  async checkAllStagesCompleted(req, res) {
-    const { userId, languageId } = req.params;
-
+  
+  async getLessonsCountByLanguageId(req, res) {
     try {
-      const lessonsProgress = await LessonsUsers.findAll({
-        where: { userId, languageId, isCompleted: true },
+      const { languageId } = req.params;
+  
+      // Count the number of lessons with the given languageId
+      const count = await Lesson.count({
+        where: { languageId },
       });
-
-      // Assuming you have a method to get all lessons for a language
-      const totalLessons = await Lesson.count({ where: { languageId } });
-
-      if (lessonsProgress.length === totalLessons) {
-        return res.status(200).json({ message: "All stages completed!" });
-      }
-
-      res.status(200).json({ message: "Some stages are still incomplete." });
+  
+      res.status(200).json({ count });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  },
-
+  }
+  
 
 };
