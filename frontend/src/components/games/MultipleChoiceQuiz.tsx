@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { decrementLives, setExtraLives, incrementEnergy } from "../../redux/actions/gameActions";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDecodeToken } from "../../hooks/useDecode";
 import {
