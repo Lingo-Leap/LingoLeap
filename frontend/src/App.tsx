@@ -21,10 +21,11 @@ import Navbar from "./components/layout/Navbar";
 import { ROUTES } from "./config/routesConfig"; // Import ROUTES array
 import { RouteConfig } from "./types/RouteConfig";
 
+//cashing systeme
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 // ==============================
 // Component Definitions
 // ==============================
-
 /**
  * GameWrapper Component
  * Wraps game-related components with the GameBar.
