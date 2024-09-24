@@ -7,11 +7,14 @@ import { FiVolume2 } from "react-icons/fi"; // Sound icon
 import { useNavigate, useParams } from "react-router-dom";
 import { buttonStyles, typographyStyles } from "../../styles/styles"; // Imported styles
 import { TrueFalseQuizProps } from "../../types/Game";
+import { useDispatch } from "react-redux";
+import { decrementLives } from "../../redux/actions/gameActions";
 
 const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
   // URL Parameters
   const { languageId, stageId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // State Management
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -25,13 +28,23 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
 
   // Timer Management
   useEffect(() => {
-    if (timeLeft > 0 && !isTimeUp) {
-      const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0) {
-      handleTimeout();
+    if (timeLeft > 0 && showPopup === null) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer); // Clear the timer if we're about to go to zero
+            setIsTimeUp(true);
+            setShowPopup("lost");
+            dispatch(decrementLives()); // Decrement lives
+            return 0; // Set timeLeft to zero
+          }
+          return prevTime - 1; // Decrease time left
+        });
+      }, 1000);
+      
+      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
     }
-  }, [timeLeft, isTimeUp]);
+  }, [timeLeft, showPopup, dispatch]);
 
   // Handle Timeout
   const handleTimeout = () => {
@@ -164,7 +177,10 @@ const TrueFalseQuiz: React.FC<TrueFalseQuizProps> = ({ questions }) => {
         </button>
       </div>
 
-      {/* Feedback Message */}
+      {/* Timer Display */}
+      <div className="mb-4 text-lg">{timeLeft} seconds remaining.</div>
+
+      {/* Display feedback */}
       {feedbackVisible && (
         <p className="mb-4">
           {selectedAnswer === questions[currentQuestion].isTrue

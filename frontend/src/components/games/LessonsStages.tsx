@@ -92,7 +92,7 @@ const StageSelection: React.FC<{ languageId: number }> = ({ languageId }) => {
     <div className={`${containerStyles.fullWidthCenter} p-4`}>
       <div className={containerStyles.card}>
         <h1 className={`${typographyStyles.heading1} text-center`}>
-          Sélectionnez un stage
+          Select a Level
         </h1>
 
         <div className="grid grid-cols-2 gap-8 mt-8 md:grid-cols-4">

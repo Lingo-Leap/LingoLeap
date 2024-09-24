@@ -1,6 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
+import { decrementLives
+ } from "../../redux/actions/gameActions";
+
+ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDecodeToken } from "../../hooks/useDecode";
 import {
@@ -23,13 +27,13 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   scrambled,
   language,
 }) => {
-  // Retrieve stage and language IDs from URL params
-  const { stageId, languageId } = useParams();
-  const navigate = useNavigate();
-  const decodedToken = useDecodeToken();
-  const userId = decodedToken ? decodedToken.id : null;
+  const [incorrectCount, setIncorrectCount] = useState(0); // Compteur de mauvaises réponses
 
-  // State management
+  const { stageId, languageId } = useParams(); // Get the stage ID from the URL
+  const navigate = useNavigate(); // Use navigate to go to the next stage
+  const decodedToken = useDecodeToken();
+  const userId = decodedToken ? decodedToken.id : null; // Get the user ID from the token
+  const dispatch = useDispatch(); // Use dispatch to
   const [sentenceOrder, setSentenceOrder] = useState<string[]>([]);
   const [availableWords, setAvailableWords] = useState<string[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -45,17 +49,23 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
 
   // Timer effect
   useEffect(() => {
-    if (timeLeft > 0 && !showPopup) {
-      const timer = setInterval(
-        () => setTimeLeft((prevTime) => prevTime - 1),
-        1000
-      );
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0) {
-      setIsTimeUp(true);
-      setShowPopup("lost");
+    if (timeLeft > 0 && showPopup === null) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer); // Clear the timer if we're about to go to zero
+            setIsTimeUp(true);
+            setShowPopup("lost");
+            dispatch(decrementLives()); // Decrement lives
+            return 0; // Set timeLeft to zero
+          }
+          return prevTime - 1; // Decrease time left
+        });
+      }, 1000);
+      
+      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
     }
-  }, [timeLeft, showPopup]);
+  }, [timeLeft, showPopup, dispatch]);
 
   // Handle word selection and sentence formation
   const handleWordSelection = (word: string) => {
@@ -94,7 +104,11 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
         }
       }
     } else {
-      setShowPopup("lost");
+      setIsCorrect(false);
+      setIncorrectCount(incorrectCount + 1); // Incrémenter le compteur de mauvaises réponses
+      dispatch(decrementLives()); // Décrémenter les vies
+      setShowPopup("lost"); // Afficher le popup de défaite
+      console.log("Réponse incorrecte");
     }
   };
 
@@ -172,6 +186,17 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
               ? sentenceOrder.join(" ")
               : "Click on a word to form a sentence"}
           </div>
+
+          {/* Message de feedback */}
+          {isCorrect !== null && (
+            <div
+              className={`text-lg font-semibold mb-4 ${
+                isCorrect ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {isCorrect ? "Correct!" : "Incorrect, try again."}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2 mb-6">

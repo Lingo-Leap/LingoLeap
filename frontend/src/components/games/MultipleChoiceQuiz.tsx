@@ -1,4 +1,6 @@
-import axios from "axios";
+import axios from "axios"; // For making POST requests
+import { useDispatch, useSelector } from "react-redux"; 
+import { decrementLives, setExtraLives, incrementEnergy } from "../../redux/actions/gameActions";
 import React, { useEffect, useState } from "react";
 import { FiVolume2 } from "react-icons/fi";
 import { useDispatch } from "react-redux";
@@ -36,19 +38,26 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
 
   const dispatch = useDispatch();
 
-  // Timer setup
+  // Set up timer
   useEffect(() => {
     if (timeLeft > 0 && showPopup === null) {
       const timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer); // Clear the timer if we're about to go to zero
+            setIsTimeUp(true);
+            setShowPopup("lost");
+            dispatch(decrementLives()); // Decrement lives
+            return 0; // Set timeLeft to zero
+          }
+          return prevTime - 1; // Decrease time left
+        });
       }, 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0) {
-      setIsTimeUp(true);
-      setShowPopup("lost");
+      
+      return () => clearInterval(timer); // Clear the interval on component unmount or when timeLeft changes
     }
-  }, [timeLeft, showPopup]);
-
+  }, [timeLeft, showPopup, dispatch]);
+  
   const handleWordClick = (word: string) => {
     if (selectedWord === word) return;
     setSelectedWord(word);
@@ -79,6 +88,8 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
       dispatch(incrementProgressPercentage(10));
       setShowPopup("won");
       dispatch(incrementEnergy(10));
+
+      // Check user data before posting
       if (userId && stageId) {
         try {
           const response = await axios.post(
@@ -99,6 +110,7 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
     } else {
       setIsCorrect(false);
       setIncorrectCount(incorrectCount + 1);
+      dispatch(decrementLives()); // Decrement lives on incorrect answer
     }
   };
 
@@ -142,7 +154,7 @@ const MultipleChoiceQuiz: React.FC<QuizProps> = ({ questions }) => {
         />
       </div>
 
-      <div className="mb-4 text-lg">{timeLeft} seconds remaining</div>
+      <div className="mb-4 text-lg">{timeLeft} seconds remaining.</div>
 
       <div className={`${containerStyles.card} flex flex-col items-center`}>
         <div className="flex items-center mb-4">

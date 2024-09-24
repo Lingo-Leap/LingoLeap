@@ -41,13 +41,13 @@ interface GameState {
 // Initial State
 // ==============================
 const initialState: GameState = {
-  lives: 3,
+  lives: 5,
   maxLives: 5,
   energy: 0,
   maxEnergy: 100,
   coins: 1000,
   extraLives: {
-    current: 2,
+    current: 5,
     max: 5,
     timer: "00:00",
   },
