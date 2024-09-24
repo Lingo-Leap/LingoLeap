@@ -17,6 +17,16 @@ const GameBar: React.FC<GameBarProps> = ({ initialTimerValue }) => {
   const energy = useSelector((state: RootState) => state.game.energy);
   const coins = useSelector((state: RootState) => state.game.coins);
   const extraLives = useSelector((state: RootState) => state.game.extraLives);
+  const userProfile = useSelector((state: RootState) => state.user.profile);
+  const progressPercentage = useSelector((state: RootState) => state.game.progressPercentage);
+    // state to track the current view overall or specific language
+    const [isOverallProgress, setIsOverallProgress] = useState(true);
+   // overall progress 
+   const overallProgress=userProfile?(userProfile.totalPoints/3).toFixed(2):0;
+   // toggle progress view 
+   const toggleProgressView = () => {
+    setIsOverallProgress(!isOverallProgress);
+  };
   
   const [timerValue, setTimerValue] = useState(initialTimerValue);
 
@@ -80,12 +90,18 @@ const GameBar: React.FC<GameBarProps> = ({ initialTimerValue }) => {
         <div className="relative w-40 h-6 mx-2 bg-gray-200 rounded-full">
           <div
             className="absolute left-0 h-full bg-green-500 rounded-full"
-            style={{ width: `${energy}%` }} 
+            style={{ width: `${isOverallProgress ? overallProgress : progressPercentage}%` }}
           />
           <span className="absolute inset-0 flex items-center justify-center text-white">
-            {energy}%
+            {isOverallProgress ? `${overallProgress}%` : `${progressPercentage}%`}
           </span>
         </div>
+        <button
+          onClick={toggleProgressView}
+          className="ml-2 text-sm text-white underline"
+        >
+          {isOverallProgress ? "View Language Progress" : "View Overall Progress"}
+        </button>
       </div>
 
       {/* Coins Section */}
