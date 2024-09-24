@@ -10,6 +10,14 @@ import {
 } from "../../styles/styles";
 import { SentenceOrderProps } from "../../types/Game";
 
+// Utility function to shuffle an array
+const shuffleArray = (array: string[]) => {
+  return array
+    .map((word) => ({ word, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ word }) => word);
+};
+
 const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
   sentence,
   scrambled,
@@ -23,11 +31,17 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
 
   // State management
   const [sentenceOrder, setSentenceOrder] = useState<string[]>([]);
-  const [availableWords, setAvailableWords] = useState<string[]>(scrambled);
+  const [availableWords, setAvailableWords] = useState<string[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [timeLeft, setTimeLeft] = useState(15);
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [showPopup, setShowPopup] = useState<string | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null); // URL for the audio file
+
+  // Shuffle words on component mount
+  useEffect(() => {
+    setAvailableWords(shuffleArray(scrambled));
+  }, [scrambled]);
 
   // Timer effect
   useEffect(() => {
@@ -84,10 +98,31 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
     }
   };
 
+  // Handle Text-to-Speech API call
+  const handleTextToSpeech = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:1274/api/sound/text-to-speech",
+        {
+          text: sentence, // Use the sentence for text-to-speech
+        }
+      );
+
+      const { url } = response.data;
+      setAudioUrl(url);
+
+      // Automatically play the audio
+      const audio = new Audio(url);
+      audio.play();
+    } catch (error: any) {
+      console.error("Error fetching text-to-speech audio:", error);
+    }
+  };
+
   // Reset the quiz state
   const handleReset = () => {
     setSentenceOrder([]);
-    setAvailableWords(scrambled);
+    setAvailableWords(shuffleArray(scrambled)); // Shuffle the words again on reset
     setIsCorrect(null);
     setTimeLeft(15);
     setIsTimeUp(false);
@@ -123,7 +158,10 @@ const SentenceOrderQuiz: React.FC<SentenceOrderProps> = ({
           <h2 className={`${typographyStyles.heading2} mr-4`}>
             Reorganize the sentence:
           </h2>
-          <button className="p-2 rounded-full text-duolingoBlue">
+          <button
+            className="p-2 rounded-full text-duolingoBlue"
+            onClick={handleTextToSpeech}
+          >
             <FiVolume2 className="text-2xl" />
           </button>
         </div>
